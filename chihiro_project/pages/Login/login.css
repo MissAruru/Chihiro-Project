@@ -1,0 +1,65 @@
+@font-face {
+    font-family: 'Karasha';
+    src: url('./assets/fonts/Karasha.woff2') format('woff2'),
+         url('./assets/fonts/Karasha.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.Form-logo {
+    width: 20%;
+    margin: 0 auto;
+}
+
+.Form-wrapper {
+    font-family: Arial, sans-serif;
+    font-size: .8rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-image: url('/assets/1.webp');
+    color: #451521;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-family: 'Karasha', 'Arial';
+    font-size: 2rem;
+}
+.Form-wrapper--button {
+    margin-bottom: 1rem;
+}
+.Form-wrapper--user label, .Form-wrapper--password {
+    display: block;
+    margin-bottom: 5px;
+}
+.Form-wrapper--user input, .Form-wrapper--password input {
+    width: 100%;
+    padding: .5rem;
+    box-sizing: border-box;
+    border:.1rem solid #451521;
+    background-color: #f0f0f0e4;
+    border-radius: .5rem;
+    filter: drop-shadow(.2rem .2rem .1rem #3b1313a7);
+}
+.Form-wrapper--button button {
+    width: 60%;
+    padding: 10px;
+    background-color: #451521;
+    color: #fff;
+    border: none;
+    border-radius: .5rem;
+    cursor: pointer;
+    margin-top: 2rem;
+}
+.Form-wrapper--button button:hover {
+    background-color: #832f2f;
+}
+
+.user, .password, .submit {
+    margin: 1rem;
+}

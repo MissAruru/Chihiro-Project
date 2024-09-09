@@ -1,0 +1,64 @@
+@font-face {
+    font-family: 'Karasha';
+    src: url('./assets/fonts/Karasha.woff2') format('woff2'),
+         url('./assets/fonts/Karasha.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+
+.Wrapper-tragedia {
+    display: grid; 
+    grid-auto-flow: column; 
+    grid-template-columns: 1fr 1.5fr 1fr; 
+    grid-template-rows: 1fr; 
+    gap: 10px 10px; 
+    grid-template-areas: 
+      ". . ."; 
+    height: 100vh;
+    margin: 0;
+    background-image: url('/assets/bg_tragedia.webp');
+    background-position: center;
+    color: #CFCFCF;
+}
+
+
+.Wrapper-tragedia--right {
+    width: 80%;
+    display: flex;
+    flex-flow: column;
+    justify-content: flex-end;
+}
+
+.Wrapper-tragedia--h2 {
+    font-family: 'Karasha';
+    margin: 2rem 0 0 5rem;
+    width: 1rem;
+    word-break: break-all;
+    letter-spacing: .6rem;
+    text-align: center;
+    line-height: 2rem;
+    font-size: 1.5rem;
+    color: #CFCFCF;
+}
+.Wrapper-tragedia--h3 { 
+    writing-mode: vertical-lr;
+    font-size: 1rem;
+    line-height: 2rem;
+    word-break: break-all;
+    margin: 1rem;
+    color: #CFCFCF;
+    letter-spacing: .6rem;
+}
+
+.Wrapper-tragedia--center {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+.Wrapper-tragedia--center :first-of-type {
+    margin-right: 6rem;
+}
+.Wrapper-tragedia--center :last-of-type{
+    margin-left: 6rem;
+}

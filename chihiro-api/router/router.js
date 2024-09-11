@@ -5,15 +5,16 @@ const { getPersonaje, postPersonaje, putPersonaje, deletePersonaje } = require('
 const router = express.Router()
 
 router.route('/login')
-    .post( postLogin )
+    .post(postLogin);
 
+// Rutas para personajes
 router.route('/personajes')
     .get(getPersonaje)
-    .post(postPersonaje)
+    .post(postPersonaje);
+
+router.route('/personajes/:id') // Cambiado para incluir el ID en la ruta
     .put(putPersonaje)
-    
-router.route('/personajes/id/:id')
-    .delete(deletePersonaje)
+    .delete(deletePersonaje);
 
 router.all('*' , ( req , res , next )=>{
     const err = new Error()

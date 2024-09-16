@@ -1,10 +1,6 @@
 import './Personajes.css';
-import background from '../../assets/bg_personajes.jpg';
-import kroggar from '../../assets/kroggar.png';
 import flower_name from '../../assets/flower_name.png';
-import { useState, useEffect, useRef } from 'react';
-import { v4 as uuidv4 } from 'uuid';
-
+import { useState, useEffect, useRef, useCallback } from 'react';
 
 export const Personajes = () => {
     const [personajes, setPersonajes] = useState([]);
@@ -13,92 +9,93 @@ export const Personajes = () => {
     const formularioRef = useRef(null);
 
     const pedirPersonajes = async () => {
-        const controller = new AbortController();
-        const options = {
-            method: 'GET',
-            signal: controller.signal
-        };
-    
         try {
-            const response = await fetch('http://localhost:3000/personajes', options);
+            const response = await fetch('http://localhost:3000/personajes');
             if (!response.ok) throw new Error('Error fetching personajes');
             const data = await response.json();
-            console.log('Datos obtenidos:', data); // Verifica los datos
-            setPersonajes(data);
+            console.log('Datos de la API:', data);
+            if (Array.isArray(data)) {
+                setPersonajes(data); // Actualiza el estado con el array
+                setSelectedPersonaje(null); // Restablecer selección después de eliminar
+            } else {
+                console.error('La respuesta de la API después de eliminar no es un array:', data);
+            }
+            
         } catch (error) {
             console.error('Error fetching personajes:', error);
         }
     };
     
-    
 
     const manejarFormulario = async (e) => {
         e.preventDefault();
         const { current: formulario } = formularioRef;
-        const [nombreInput, razaInput, claseInput, nivelInput, descripcionInput, imgInput] = formulario.elements;
-
+        const [nombreInput, razaInput, claseInput, nivelInput, descripcionInput] = formulario.elements;
+        
         const personaje = {
-            id: selectedPersonaje ? selectedPersonaje.id : uuidv4(),
             nombre: nombreInput.value,
             raza: razaInput.value,
             clase: claseInput.value,
             nivel: nivelInput.value,
-            descripcion: descripcionInput.value,
-            img: imgInput.files[0] // Si estás cargando una imagen
+            descripcion: descripcionInput.value
         };
-
-        const url = selectedPersonaje ? `http://localhost:3000/personajes/${selectedPersonaje.id}` : "http://localhost:3000/personajes";
+        
+        const url = selectedPersonaje ? `http://localhost:3000/personajes/${selectedPersonaje._id}` : "http://localhost:3000/personajes";
         const method = selectedPersonaje ? 'PUT' : 'POST';
-
+        
         try {
-            const formData = new FormData();
-            for (const key in personaje) {
-                formData.append(key, personaje[key]);
-            }
-
-            const options = {
+            const response = await fetch(url, {
                 method,
-                body: formData,
-            };
-
-            const response = await fetch(url, options);
-            if (!response.ok) throw new Error(`Error ${method === 'PUT' ? 'updating' : 'adding'} personaje: Unknown error`);
-
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(personaje)
+            });
+            if (!response.ok) throw new Error(`Error ${method === 'PUT' ? 'updating' : 'adding'} personaje: ${response.statusText}`);
+            
             const data = await response.json();
-            if (selectedPersonaje) {
-                setPersonajes(personajes.map(p => (p.id === selectedPersonaje.id ? data : p)));
-                setSelectedPersonaje(null);
+            console.log('Respuesta después de enviar el formulario:', data);
+        
+            if (method === 'PUT') {
+                setPersonajes(prevPersonajes => prevPersonajes.map(p => (p._id === selectedPersonaje._id ? data : p)));
             } else {
-                setPersonajes((prevPersonajes) => [...prevPersonajes, data]);
+                setPersonajes(prevPersonajes => [...prevPersonajes, data]);
             }
+            setSelectedPersonaje(null); // Restablece la selección después de agregar o actualizar
             formulario.reset();
         } catch (error) {
             console.error(`Error ${method === 'PUT' ? 'updating' : 'adding'} personaje: ${error.message}`);
         }
     };
+    
+    
+    
+    
 
-    const deletePersonaje = async (id) => {
-        if (!id) {
-            console.error("ID del personaje no proporcionado");
-            return;
-        }
-
+    const deletePersonaje = async (_id) => {
+        if (!_id) return;
+        
         try {
-            const response = await fetch(`http://localhost:3000/personajes/${id}`, { method: 'DELETE' });
-            if (!response.ok) throw new Error(`Error deleting personaje: ${response.statusText}`);
-            const data = await response.json();
-            setPersonajes(data);
-            setSelectedPersonaje(null); // Restablecer selección después de eliminar
+            const response = await fetch(`http://localhost:3000/personajes/${_id}`, { method: 'DELETE' });
+            if (!response.ok) throw new Error(`Error eliminando personaje: ${response.statusText}`);
+            
+            await response.json();
+            console.log('Personaje eliminado correctamente');
+            
+            // Actualiza el estado eliminando el personaje localmente
+            setPersonajes(prevPersonajes => prevPersonajes.filter(personaje => personaje._id !== _id));
+            setSelectedPersonaje(null);
         } catch (error) {
             console.error('Error eliminando el personaje:', error);
         }
     };
+    
+    
+
 
     const handleLetterClick = (personaje) => {
         setSelectedPersonaje(personaje);
         const { nombre, raza, clase, nivel, descripcion } = personaje;
         const { current: formulario } = formularioRef;
-    
+
         if (formulario) {
             formulario[0].value = nombre;
             formulario[1].value = raza;
@@ -109,13 +106,10 @@ export const Personajes = () => {
             console.error("Formulario no encontrado en la referencia.");
         }
     };
-    
 
     useEffect(() => {
         pedirPersonajes();
-        console.log(personajes); // Verificar qué datos contiene el array
     }, []);
-    
 
     return (
         <>
@@ -126,17 +120,19 @@ export const Personajes = () => {
                 </div>
 
                 <div className="Wrapper-names names">
-    {personajes.map((personaje) => (
-        <h3 key={personaje.id} onClick={() => handleLetterClick(personaje)}>
-            {personaje.nombre ? personaje.nombre[0] : 'N/A'} {/* Verifica si "nombre" existe */}
-        </h3>
-    ))}
-    <img src={flower_name} alt="Flower_name" className='Flower_name' />
-</div>
+                {personajes.map((personaje) => {
+    console.log(`Key for personaje: ${personaje._id}`); // Verifica las claves aquí
+    return (
+       <ul> 
+        <li key={personaje._id} onClick={() => handleLetterClick(personaje)}>
+            {personaje.nombre ? personaje.nombre : 'Sin nombre'}
+        </li>
+        </ul>
+    );
+})}
+                    <img src={flower_name} alt="Flower_name" className='Flower_name' />
+                </div>
 
-
-
-                {/* Muestra solo el personaje seleccionado */}
                 <div className="Wrapper-story story">
                     {selectedPersonaje ? (
                         <div>
@@ -145,9 +141,6 @@ export const Personajes = () => {
                             <p>Clase: {selectedPersonaje.clase}</p>
                             <p>Nivel: {selectedPersonaje.nivel}</p>
                             <p>Descripción: {selectedPersonaje.descripcion}</p>
-                            {selectedPersonaje.img && (
-                                <img src={selectedPersonaje.imgUrl} alt={selectedPersonaje.nombre} />
-                            )}
                         </div>
                     ) : (
                         <p>No hay personaje seleccionado.</p>
@@ -162,14 +155,11 @@ export const Personajes = () => {
                     <input type="text" placeholder='Clase' className='clase' />
                     <input type="text" placeholder='Nivel' className='nivel' />
                     <textarea name="textarea" id="textarea" placeholder='Escribe la historia de tu personaje aquí' className='descripcion'></textarea>
-                    <input type="file" name="Subir imagen" id="Upload" className='img' />
                     <input type="submit" value="Enviar" className='enviar' />
                     {selectedPersonaje && (
-    <>
-        <button type="button" className='actualizar' onClick={manejarFormulario}>Actualizar</button>
-        <button type="button" className='eliminar' onClick={() => deletePersonaje(selectedPersonaje.id)}>Eliminar</button>
-    </>
+    <button type="button" className='eliminar' onClick={() => deletePersonaje(selectedPersonaje._id)}>Eliminar</button>
 )}
+
                 </form>
             </div>
 

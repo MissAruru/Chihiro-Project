@@ -24,22 +24,28 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+
 app.use(router);
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'uploads/'); // Asegúrate de que esta carpeta exista
+        cb(null, 'uploads'); // Directorio donde se guardarán las imágenes
     },
     filename: (req, file, cb) => {
-        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+        cb(null, Date.now() + path.extname(file.originalname)); // Renombrar el archivo con un timestamp
     }
 });
 
 const upload = multer({ storage: storage });
 
 // Agrega el middleware de carga en una ruta de ejemplo
-app.post('/upload', upload.single('file'), (req, res) => {
-    res.send('Archivo cargado con éxito');
+app.post('/upload', upload.single('imagen'), (req, res) => {
+    if (!req.file) {
+        return res.status(400).send('No se ha subido ningún archivo.');
+    }
+    res.status(200).send({ filePath: `uploads/${req.file.filename}` });
 });
 
 // Manejo de errores

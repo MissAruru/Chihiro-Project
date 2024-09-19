@@ -205,6 +205,9 @@
     background-color: #D3C0AA;
 }
 
+.Wrapper-personaje--noseleccionado {
+    margin: 3rem 0 0 6rem;
+}
 
 .Div-links {
     display: flex;

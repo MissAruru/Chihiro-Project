@@ -51,18 +51,12 @@ const getPersonaje = async (req, res, next) => {
 
 const postPersonaje = async (req, res, next) => {
     const { nombre, nivel, raza, clase, descripcion } = req.body;
-    const imagen = req.file ? req.file.filename : null; // Obtén el nombre de la imagen subida
-    
+    const imagen = req.file ? req.file.filename : null; 
     try {
-        const nuevo = new Personajes({ 
-            nombre, 
-            nivel, 
-            raza, 
-            clase, 
-            descripcion, 
-            imagen // Asegúrate de que el campo de la imagen se incluya
-        });
+        const nuevo = new Personajes({ nombre, nivel, raza, clase, descripcion, imagen });
         await nuevo.save();
+
+        console.log(nuevo);
 
         const personajes = await Personajes.find();
         res.json(personajes);
@@ -71,7 +65,6 @@ const postPersonaje = async (req, res, next) => {
         res.status(500).json({ error: 'Internal server error', details: error.message });
     }
 };
-
 
 
 const putPersonaje = async (req, res) => {
@@ -83,12 +76,16 @@ const putPersonaje = async (req, res) => {
             return res.status(400).json({ message: 'ID inválido' });
         }
 
+        // Convierte el ID en ObjectId
+        const personajeId = new mongoose.Types.ObjectId(id);
+
+        // Prepara los datos de actualización
         const updateData = {
             ...req.body,
-            imagen: req.file ? req.file.filename : undefined // Actualiza la imagen solo si hay una nueva
+            imagen: req.file ? req.file.filename : undefined // Actualiza la imagen si se ha subido una nueva
         };
 
-        const personajeActualizado = await Personajes.findByIdAndUpdate(id, updateData, { new: true });
+        const personajeActualizado = await Personajes.findByIdAndUpdate(personajeId, updateData, { new: true });
         if (!personajeActualizado) {
             return res.status(404).json({ message: 'Personaje no encontrado' });
         }
@@ -98,7 +95,6 @@ const putPersonaje = async (req, res) => {
         res.status(500).json({ error: 'Error interno del servidor' });
     }
 };
-
 
 
 

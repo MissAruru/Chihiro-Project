@@ -13,6 +13,7 @@ const personajesSchema = new mongoose.Schema(
         raza: String,
         clase: String,
         descripcion: String,
+        imagen: String,
     },
     {
         collection: 'personajes',

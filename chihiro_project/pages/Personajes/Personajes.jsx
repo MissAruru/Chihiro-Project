@@ -5,7 +5,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 export const Personajes = () => {
     const [personajes, setPersonajes] = useState([]);
     const [selectedPersonaje, setSelectedPersonaje] = useState(null);
-    const [imagen, setImagen] = useState(null); 
+
 
     const formularioRef = useRef(null);
 
@@ -14,62 +14,69 @@ export const Personajes = () => {
             const response = await fetch('http://localhost:3000/personajes');
             if (!response.ok) throw new Error('Error fetching personajes');
             const data = await response.json();
-            console.log('Datos de la API:', data);
+            console.log('Datos de la API:', data); // Verifica si la imagen está incluida aquí
+    
             if (Array.isArray(data)) {
                 setPersonajes(data); // Actualiza el estado con el array
-                setSelectedPersonaje(null); // Restablecer selección después de eliminar
             } else {
                 console.error('La respuesta de la API después de eliminar no es un array:', data);
             }
-            
         } catch (error) {
             console.error('Error fetching personajes:', error);
         }
     };
     
 
-    const manejarFormulario = async (e) => {
-        e.preventDefault();
-        const { current: formulario } = formularioRef;
-    
-        // Crear un objeto FormData para enviar los datos del formulario y la imagen
-        const formData = new FormData();
-        formData.append('nombre', formulario.nombre.value);
-        formData.append('raza', formulario.raza.value);
-        formData.append('clase', formulario.clase.value);
-        formData.append('nivel', formulario.nivel.value);
-        formData.append('descripcion', formulario.descripcion.value);
-        if (imagen) formData.append('imagen', imagen);
-    
-        const url = selectedPersonaje ? `http://localhost:3000/personajes/${selectedPersonaje._id}` : "http://localhost:3000/personajes";
-        const method = selectedPersonaje ? 'PUT' : 'POST';
-    
-        try {
-            const response = await fetch(url, {
-                method,
-                body: formData // Enviar el objeto FormData
-            });
-            if (!response.ok) throw new Error(`Error ${method === 'PUT' ? 'updating' : 'adding'} personaje: ${response.statusText}`);
-            
-            await response.json();
-            console.log('Formulario enviado correctamente');
-            
-            // Refresca la lista de personajes llamando a pedirPersonajes
-            await pedirPersonajes();  // Refresca la lista completa de personajes
-            setSelectedPersonaje(null); // Restablece la selección después de agregar o actualizar
-            formulario.reset();
-            setImagen(null); // Restablece el estado de la imagen
-        } catch (error) {
-            console.error(`Error ${method === 'PUT' ? 'updating' : 'adding'} personaje: ${error.message}`);
-        }
-    };
-    
-    
-    
-    
-    
-    
+    const [imagen, setImagen] = useState(null);
 
+const manejarArchivoImagen = (e) => {
+    setImagen(e.target.files[0]); // Guarda el archivo seleccionado en el estado
+};
+
+const manejarFormulario = async (e) => {
+    e.preventDefault();
+    const { current: formulario } = formularioRef;
+
+    // Crear un objeto FormData para enviar los datos del formulario y la imagen
+    const formData = new FormData();
+    formData.append('nombre', formulario.nombre.value);
+    formData.append('raza', formulario.raza.value);
+    formData.append('clase', formulario.clase.value);
+    formData.append('nivel', formulario.nivel.value);
+    formData.append('descripcion', formulario.descripcion.value);
+
+    // Agregar la imagen solo si existe
+    if (imagen) {
+        formData.append('imagen', imagen);
+    }
+
+    const url = selectedPersonaje ? `http://localhost:3000/personajes/${selectedPersonaje._id}` : "http://localhost:3000/personajes";
+    const method = selectedPersonaje ? 'PUT' : 'POST';
+
+    try {
+        const response = await fetch(url, {
+            method,
+            body: formData // Enviar el objeto FormData
+        });
+
+        if (!response.ok) throw new Error(`Error ${method === 'PUT' ? 'updating' : 'adding'} personaje: ${response.statusText}`);
+        
+        await response.json();
+        console.log('Formulario enviado correctamente');
+        
+        // Refresca la lista de personajes llamando a pedirPersonajes
+        await pedirPersonajes();  // Refresca la lista completa de personajes
+        setSelectedPersonaje(null); // Restablece la selección después de agregar o actualizar
+        formulario.reset();
+        setImagen(null); // Restablece el estado de la imagen
+    } catch (error) {
+        console.error(`Error ${method === 'PUT' ? 'updating' : 'adding'} personaje: ${error.message}`);
+    }
+};
+
+
+    
+    
     const deletePersonaje = async (_id) => {
         if (!_id) return;
         
@@ -146,16 +153,21 @@ export const Personajes = () => {
                             <p>Clase: {selectedPersonaje.clase}</p>
                             <p>Nivel: {selectedPersonaje.nivel}</p>
                             <p>Descripción: {selectedPersonaje.descripcion}</p>
-                            {selectedPersonaje.imagen && (
-                                <img
-                                    src={`http://localhost:3000/uploads/${selectedPersonaje.imagen}`}
-                                    alt={selectedPersonaje.nombre}
-                                    className="personaje-imagen"
-                                />
-                            )}
+
+                            {console.log('Imagen seleccionada:', selectedPersonaje.imagen)} 
+
+                            {selectedPersonaje.imagen ? (
+                <img
+                    src={`http://localhost:3000/uploads/${selectedPersonaje.imagen}`}
+                    alt={selectedPersonaje.nombre}
+                    className="personaje-imagen"
+                />
+            ) : (
+                <p>Imagen no disponible</p>
+            )}
                         </div>
                     ) : (
-                        <p>No hay personaje seleccionado.</p>
+                        <p className='Wrapper-personaje--noseleccionado'>No hay personaje seleccionado.</p>
                     )}
                 </div>
             </div>
@@ -168,7 +180,7 @@ export const Personajes = () => {
         <input type="text" name="nivel" placeholder='Nivel' className='nivel' />
         <textarea name="descripcion" placeholder='Escribe la historia de tu personaje aquí' className='descripcion'></textarea>
         
-        <input type="file" name="imagen" onChange={(e) => setImagen(e.target.files[0])} />
+        <input type="file" name="imagen" onChange={manejarArchivoImagen} />
 
 
         <input type="submit" value="Enviar" className='enviar' />

@@ -1,6 +1,6 @@
 import './Personajes.css';
 import flowerName from '../../assets/flower_name.png';
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 export const Personajes = () => {
     const [personajes, setPersonajes] = useState([]);
@@ -121,56 +121,54 @@ const manejarFormulario = async (e) => {
     return (
         <>
             <div className="Wrapper-personajes" id="protagonistas">
-                <div className="Wrapper-personajes--top top">
-                    <h2 className='Wrapper-personajes--h2'>Los protagonistas</h2>
-                    <p className='Wrapper-personajes--p'>¡Crea tu personaje e inclúyelo en la historia de Chihiro! Rellena con tus datos tu nombre, raza, clase nivel e historia.</p>
-                </div>
+    <div className="Wrapper-personajes--top top">
+        <h2 className='Wrapper-personajes--h2'>Los protagonistas</h2>
+        <p className='Wrapper-personajes--p'>¡Crea tu personaje e inclúyelo en la historia de Chihiro! Rellena con tus datos tu nombre, raza, clase nivel e historia.</p>
+    </div>
 
-                <ul className="Wrapper-names">
-    {personajes.map((personaje) => {
-        return (
-            <li
-                key={personaje._id}
-                onClick={() => handleLetterClick(personaje)}
-                className="personaje-item"
-                style={{
-                    backgroundImage: `url(${flowerName})`, // Usamos la imagen importada
-                }}
-            >
-                {personaje.nombre}
-            </li>
-        );
-    })}
-</ul>
+    <div className="Wrapper-names">
+        <ul className="Wrapper-names">
+            {personajes.map((personaje) => (
+                <li
+                    key={personaje._id}
+                    onClick={() => handleLetterClick(personaje)}
+                    className="personaje-item"
+                    style={{ backgroundImage: `url(${flowerName})` }}
+                >
+                    {personaje.nombre}
+                </li>
+            ))}
+        </ul>
+    </div>
 
+    <div className="character">
+        {selectedPersonaje && selectedPersonaje.imagen ? (
+            <img
+                src={`http://localhost:3000/uploads/${selectedPersonaje.imagen}`}
+                alt={selectedPersonaje.nombre}
+                className="personaje-imagen"
+            />
+        ) : (
+            <p>Haz click en los nombres de la izquierda para ver los personajes</p>
+        )}
+    </div>
 
-
-                <div className="Wrapper-story story">
-                    {selectedPersonaje ? (
-                        <div className='Wrapper-div--personajes'>
-                            <h2>{selectedPersonaje.nombre}</h2>
-                            <p>Raza: {selectedPersonaje.raza}</p>
-                            <p>Clase: {selectedPersonaje.clase}</p>
-                            <p>Nivel: {selectedPersonaje.nivel}</p>
-                            <p>Descripción: {selectedPersonaje.descripcion}</p>
-
-                            {console.log('Imagen seleccionada:', selectedPersonaje.imagen)} 
-
-                            {selectedPersonaje.imagen ? (
-                <img
-                    src={`http://localhost:3000/uploads/${selectedPersonaje.imagen}`}
-                    alt={selectedPersonaje.nombre}
-                    className="personaje-imagen"
-                />
-            ) : (
-                <p>Imagen no disponible</p>
-            )}
-                        </div>
-                    ) : (
-                        <p className='Wrapper-personaje--noseleccionado'>No hay personaje seleccionado.</p>
-                    )}
-                </div>
+    <div className="Wrapper-story">
+        {selectedPersonaje ? (
+            <div className='Wrapper-story-text'>
+                <h2 className='Wrapper-story--h2'>{selectedPersonaje.nombre}</h2>
+                <p>Raza: {selectedPersonaje.raza}</p>
+                <p>Clase: {selectedPersonaje.clase}</p>
+                <p>Nivel: {selectedPersonaje.nivel}</p>
+                <p>Descripción: {selectedPersonaje.descripcion}</p>
             </div>
+        ) : (
+            <p className='Wrapper-personaje--noseleccionado'>Sugerimos un máximo de 285 carácteres.</p>
+        )}
+    </div>
+</div>
+
+
 
             <div className="Creator">
     <form ref={formularioRef} onSubmit={manejarFormulario} className='Wrapper-creator' encType="multipart/form-data">
@@ -178,9 +176,9 @@ const manejarFormulario = async (e) => {
         <input type="text" name="raza" placeholder='Raza' className='raza' />
         <input type="text" name="clase" placeholder='Clase' className='clase' />
         <input type="text" name="nivel" placeholder='Nivel' className='nivel' />
-        <textarea name="descripcion" placeholder='Escribe la historia de tu personaje aquí' className='descripcion'></textarea>
+        <textarea maxLength={285} name="descripcion" placeholder='Escribe la historia de tu personaje aquí' className='descripcion'></textarea>
         
-        <input type="file" name="imagen" onChange={manejarArchivoImagen} />
+        <input type="file" name="imagen" className='Wrapper-img--personaje' onChange={manejarArchivoImagen} />
 
 
         <input type="submit" value="Enviar" className='enviar' />

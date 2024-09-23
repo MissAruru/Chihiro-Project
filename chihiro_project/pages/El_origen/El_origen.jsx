@@ -2,16 +2,25 @@ import React, { useState } from 'react';
 import arrow from '../../assets/Arrow.png';
 import origin_bunny from '../../assets/bunny_moon.webp';
 import './El_origen.css';
-import origenSlide from '../../assets/origen_2.png'
-import lantern from '../../assets/chihiro_lantern.png'
-import hand from '../../assets/chihiro_hand.png'
+import origenSlide from '../../assets/origen_2.png';
+import lantern from '../../assets/chihiro_lantern.png';
+import hand from '../../assets/chihiro_hand.png';
 
 export const Origen = () => {
     const [historia, setHistoria] = useState('primera');
+    const [isFading, setIsFading] = useState(false);
 
     const cambiarHistoria = () => {
-        setHistoria(historia === 'primera' ? 'segunda' : 'primera')
-    }
+        // Añade la clase para que la transición inicie
+        setIsFading(true);
+        
+        setTimeout(() => {
+            // Cambia la historia después de la animación
+            setHistoria(historia === 'primera' ? 'segunda' : 'primera');
+            // Elimina el fade para hacer visible la nueva historia
+            setIsFading(false);
+        }, 500); // Duración de la animación, debe coincidir con la transición en el CSS
+    };
 
     return (
         <div className={`Origen-wrapper ${historia}`} id="origen">
@@ -20,7 +29,7 @@ export const Origen = () => {
             <div className='arrow'>
                 <img src={arrow} alt="arrow" className='Wrapper-arrow' onClick={cambiarHistoria} />
             </div>
-            <div className="Wrapper-origen-bottom left">
+            <div className={`Wrapper-origen-bottom left ${isFading ? 'hidden' : 'visible'}`}>
                 {historia === 'primera' ? (
                     <>
                         <p className='Wrapper-text--first'>Según las viejas historias, el reino de Chihiro se remonta a antaño, cuando la diosa Inari se apiadó de un conejo blanco y lo subió hasta la luna.</p>
@@ -30,14 +39,14 @@ export const Origen = () => {
                 ) : (
                     <>
                         <div className='Wrapper-container'>
-                        <img src={origenSlide} alt="other-bunny" className='Wrapper-origen--img' />
-                        <img src={lantern} alt="lantern_chihiro" className='Wrapper-origen--lantern' />
-                        <p className='Wrapper-origen--text'>Desde entonces en ese país se realizan ofrendas a esa diosa compasiva y benevolente, pero algo está a punto de cambiar..</p>
-                        <img src={hand} alt="hand_chihiro" className='Wrapper-origen--hand' />
+                            <img src={origenSlide} alt="other-bunny" className='Wrapper-origen--img' />
+                            <img src={lantern} alt="lantern_chihiro" className='Wrapper-origen--lantern' />
+                            <p className='Wrapper-origen--text'>Desde entonces en ese país se realizan ofrendas a esa diosa compasiva y benevolente, pero algo está a punto de cambiar..</p>
+                            <img src={hand} alt="hand_chihiro" className='Wrapper-origen--hand' />
                         </div>
                     </>
                 )}
             </div>
         </div>
-    )
-}
+    );
+};

@@ -116,6 +116,21 @@ p {
     width: 70%;
 }
 
+.Wrapper-origen-bottom {
+    transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+}
+
+.Wrapper-origen-bottom.hidden {
+    opacity: 0;
+    transform: translateY(-50%);
+}
+
+.Wrapper-origen-bottom.visible {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+
 @media only screen and (max-width: 768px) {
   
     .Origen-wrapper {

@@ -1,118 +1,117 @@
-const { Personajes } = require('./../models/models');
-const mongoose = require('mongoose');
-const multer = require('multer');
-const path = require('path');
+const { Personajes } = require('./../models/models')
+const mongoose = require('mongoose')
+const multer = require('multer')
+const path = require('path')
 
-const controller = new AbortController();
-const timeoutId = setTimeout(() => controller.abort(), 5000);
+const controller = new AbortController()
+const timeoutId = setTimeout(() => controller.abort(), 5000)
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, 'uploads/'); // Carpeta donde se guardarán las imágenes
+        cb(null, 'uploads/')
     },
     filename: function (req, file, cb) {
-        cb(null, Date.now() + path.extname(file.originalname)); // Nombre del archivo (único) con extensión original
+        cb(null, Date.now() + path.extname(file.originalname))
     }
-});
+})
 
 const fileFilter = (req, file, cb) => {
-    const allowedTypes = /jpeg|jpg|png|gif/;
-    const isValid = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+    const allowedTypes = /jpeg|jpg|png|gif/
+    const isValid = allowedTypes.test(path.extname(file.originalname).toLowerCase())
     if (isValid) {
-        cb(null, true);
+        cb(null, true)
     } else {
-        cb(new Error('Solo se permiten archivos de imagen (jpeg, jpg, png, gif)'));
+        cb(new Error('Solo se permiten archivos de imagen (jpeg, jpg, png, gif)'))
     }
-};
+}
 
 const upload = multer({
     storage: storage,
     fileFilter: fileFilter,
-    limits: { fileSize: 5 * 1024 * 1024 } // 5 MB
-});
+    limits: { fileSize: 5 * 1024 * 1024 }
+})
 
 const getPersonaje = async (req, res, next) => {
     try {
-        const personajes = await Personajes.find();
+        const personajes = await Personajes.find()
         
-        // Convertir ObjectId a string en cada personaje
+        
         const personajesFormatted = personajes.map(p => ({
-            ...p._doc, // Acceder a los datos del documento sin metadatos adicionales
-            _id: p._id.toString() // Convertir ObjectId a string
-        }));
+            ...p._doc, 
+            _id: p._id.toString() 
+        }))
 
-        res.json(personajesFormatted);
+        res.json(personajesFormatted)
     } catch (error) {
-        console.error('Error al obtener personajes:', error.message);
-        res.status(500).json({ error: 'Internal server error' });
+        console.error('Error al obtener personajes:', error.message)
+        next(error)
     }
-};
+}
+
 
 
 const postPersonaje = async (req, res, next) => {
-    const { nombre, nivel, raza, clase, descripcion } = req.body;
-    const imagen = req.file ? req.file.filename : null; 
+    const { nombre, nivel, raza, clase, descripcion } = req.body
+    const imagen = req.file ? req.file.filename : null
     try {
-        const nuevo = new Personajes({ nombre, nivel, raza, clase, descripcion, imagen });
-        await nuevo.save();
+        const nuevo = new Personajes({ nombre, nivel, raza, clase, descripcion, imagen })
+        await nuevo.save()
 
-        console.log(nuevo);
+        console.log(nuevo)
 
-        const personajes = await Personajes.find();
-        res.json(personajes);
+        const personajes = await Personajes.find()
+        res.json(personajes)
     } catch (error) {
-        console.error('Error al crear el personaje:', error.message);
-        res.status(500).json({ error: 'Internal server error', details: error.message });
+        console.error('Error al crear el personaje:', error.message)
+        next(error)
     }
-};
+}
 
 
-const putPersonaje = async (req, res) => {
+
+const putPersonaje = async (req, res, next) => {
     try {
-        const id = req.params.id;
+        const id = req.params.id
 
-        // Verificar si el ID tiene el formato correcto
         if (!mongoose.Types.ObjectId.isValid(id)) {
-            return res.status(400).json({ message: 'ID inválido' });
+            return res.status(400).json({ message: 'ID inválido' })
         }
 
-        // Convierte el ID en ObjectId
-        const personajeId = new mongoose.Types.ObjectId(id);
-
-        // Prepara los datos de actualización
+        const personajeId = new mongoose.Types.ObjectId(id)
         const updateData = {
             ...req.body,
-            imagen: req.file ? req.file.filename : undefined // Actualiza la imagen si se ha subido una nueva
-        };
+            imagen: req.file ? req.file.filename : undefined
+        }
 
-        const personajeActualizado = await Personajes.findByIdAndUpdate(personajeId, updateData, { new: true });
+        const personajeActualizado = await Personajes.findByIdAndUpdate(personajeId, updateData, { new: true })
         if (!personajeActualizado) {
-            return res.status(404).json({ message: 'Personaje no encontrado' });
+            return res.status(404).json({ message: 'Personaje no encontrado' })
         }
-        res.json(personajeActualizado);
+        res.json(personajeActualizado)
     } catch (error) {
-        console.error('Error al actualizar el personaje:', error.message);
-        res.status(500).json({ error: 'Error interno del servidor' });
+        console.error('Error al actualizar el personaje:', error.message)
+        next(error)
     }
-};
+}
 
 
 
-const deletePersonaje = async (req, res) => {
-    const { id } = req.params;
+
+const deletePersonaje = async (req, res, next) => {
+    const { id } = req.params
     try {
-        const personajeId = new mongoose.Types.ObjectId(id); 
+        const personajeId = new mongoose.Types.ObjectId(id)
 
-        const result = await Personajes.findByIdAndDelete(personajeId);
+        const result = await Personajes.findByIdAndDelete(personajeId)
         if (!result) {
-            return res.status(404).json({ error: 'Personaje no encontrado' });
+            return res.status(404).json({ error: 'Personaje no encontrado' })
         }
-        res.status(200).json({ message: 'Personaje eliminado correctamente' });
+        res.status(200).json({ message: 'Personaje eliminado correctamente' })
     } catch (error) {
-        console.error('Error al eliminar el personaje:', error.message);
-        res.status(500).json({ error: 'Error interno del servidor' });
+        console.error('Error al eliminar el personaje:', error.message)
+        next(error)
     }
-};
+}
 
 
 
@@ -122,4 +121,4 @@ module.exports = {
     postPersonaje,
     putPersonaje,
     deletePersonaje
-};
+}

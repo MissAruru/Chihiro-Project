@@ -1,3 +1,13 @@
+/* Primera parte de la página web que contiene:
+
+- Barra superior con Logo en la izquierda 
+-En el centro, las distintas partes de la página
+- Dos botones que redirigen al login.
+
+En el espacio restante tenemos el H1 junto a su breve descripción.
+*/
+
+
 import './Inicio.css'
 import logo from '../../assets/chihiro_sinlogo.png'
 import { Origen } from '../El_origen/El_origen'

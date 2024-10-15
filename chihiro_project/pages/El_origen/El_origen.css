@@ -81,7 +81,7 @@ p {
 }
 
 .Origen-wrapper.segunda {
-    background: linear-gradient(180deg, #F4A862 0%, #C17D6E 50%, #1F314C 100%);
+    background: linear-gradient(180deg, #F4A862 0%, #C17D6E 50%, #162742 100%);
     transition: background-color 0.5s ease-in-out;
 }
 
@@ -109,7 +109,11 @@ p {
     margin-left: 10rem;
  }
   
-  .Wrapper-origen--text { grid-area: Wrapper-origen--text; }
+  .Wrapper-origen--text { 
+    
+    grid-area: Wrapper-origen--text;
+    color: #321f1f;
+}
   
   .Wrapper-origen--hand { 
     grid-area: Wrapper-origen--hand;
@@ -146,6 +150,12 @@ p {
     transition: opacity 2s ease-in-out;
     overflow: hidden;
 }
+
+.Wrapper-container {
+
+    display: block;
+
+}
 .Wrapper-origenh2 {
     font-family: 'Karasha';
     margin-top: 2rem;
@@ -161,7 +171,7 @@ p {
     font-size: 1rem;
     line-height: 2rem;
     margin: 1rem;
-    color: #443131;
+    color: #362323;
 
 }   
 

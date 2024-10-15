@@ -1,7 +1,7 @@
 .Wrapper-personajes {
     background-size:cover;
     background-repeat: no-repeat;
-    background-image: url('/assets/bg_personajes.webp');
+    background-image: url('/assets/bg-charac.jpg');
     display: grid; 
     grid-auto-flow: column; 
     grid-template-columns: 1fr 1fr 1fr; 
@@ -19,6 +19,21 @@
 }
 .names { grid-area: names; }
 .character { grid-area: character; }
+
+.Character-wrapper {
+    width: 100%;
+    padding: 200px 20px; 
+    background-image: url(/assets/cloud_ch.png);
+    background-position: center;
+    background-size: contain; 
+    background-repeat: no-repeat; 
+}
+
+.Character-wrapper p {
+    color: #310e0e;
+}
+
+
 .story { 
     grid-area: story; }
 
@@ -71,10 +86,15 @@
 }
 
 .Wrapper-personajes--p {
-    width: 35%;
-    font-size: 1rem;
-    color: black;
-    background-color: #D3C0AA;
+    width: 30%;
+    font-size: clamp(0.7rem, 0.4137rem + 0.916vw, 1rem);
+    color: rgb(50, 11, 11);
+   
+    padding: 20px 20px; 
+
+    background-position: center;
+    background-size: contain; 
+    background-repeat: no-repeat; 
 }
 
 .Wrapper-personajes--h2 {
@@ -107,6 +127,7 @@
 .Wrapper-story-text {
     width: 60%;
     margin-left: 5rem;
+    font-size: clamp(0.6rem, 0.3275rem + 1.8321vw, 1rem);
 }
 
 .personaje-imagen {
@@ -163,17 +184,17 @@
 .Wrapper-creator input {
     background-color: #D3C0AA;
     font-size: .8rem;
-    border-radius: .3rem;
+    border-radius: 0.3rem;
 }  
 
 .Wrapper-names h3 {
-    margin-bottom: 10px; /* Ajusta el valor según lo que necesites */
+    margin-bottom: 10px; 
 }
 
 .Wrapper-names {
     display: flex;
-    flex-direction: column; /* Alinea los elementos en columna */
-    gap: 10px; /* Espaciado entre los elementos */
+    flex-direction: column; 
+    gap: 10px; 
 }
 .Wrapper-names h3 {
     display: inline-block;
@@ -215,14 +236,48 @@
 }
 
 .enviar:hover, .eliminar:hover, .actualizar:hover, .img:hover {
-    background-color: #D3C0AA;
+    background-color: #d3c0aaa5;
+    cursor: pointer;
 }
 
 .Wrapper-personaje--noseleccionado {
-    margin: 0rem 0 0 9rem;
+    margin: 0rem 0 0 7rem;
     width: 50%;
 }
 
+.Wrapper-img--personaje {
+    display: flex;
+    align-items: center;
+    
+    width: 100%;
+    max-width: 400px;
+}
+
+.imagen {
+    display: none; 
+}
+
+.Wrapper-img--personaje label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #c09c72; 
+    color: white;
+    padding: 10px 15px;
+    border-radius: 0 5px 5px 0;
+    font-size: 0.8rem;
+    cursor: pointer;
+    white-space: nowrap; 
+}
+
+.input-fake {
+    background-color: #f9f9f9;
+    border-radius: 5px 0 0 5px;
+    padding: 14px;
+    flex-grow: 1;
+    font-size: 14px;
+    color: #666; 
+}
 
 
 
@@ -230,7 +285,7 @@
 .Div-links {
     display: flex;
     background-color:#543426 ;
-    padding: 4rem;
+    padding: 2rem;
 }
 .Div-links ul {
     font-size: 1.1rem;
@@ -281,3 +336,159 @@
     color: #D39C8A;
 
 }
+
+@media only screen and (max-width: 768px) {
+
+    .Wrapper-tragedia--right {
+        padding-bottom: .3rem;
+    }
+
+    .Wrapper-tragedia--h3 {
+    margin: 0;
+    
+    }
+
+    .Wrapper-personajes {
+        background-image: url('/assets/bg-charac-m.jpg');
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+        gap: 20px;
+        grid-template-areas:
+            "top"
+            "names"
+            "character"
+            "story";
+    }
+    .Wrapper-personajes--h2 {
+        font-size: 2rem;
+        font-family: 'Karasha';
+        color: #D3C0AA;
+        margin: 0 auto;
+        padding-top: 2rem;
+    }
+    .Wrapper-personajes--top {
+        display: flex;
+        flex-direction: column;
+       
+    }
+    .Wrapper-personajes--p {
+        width: 95%;
+        font-size: 1rem;
+        color: black;
+        margin: 0 auto;
+        text-align: center;
+        background-image: url(/assets/cloud_ch.png);
+        background-position: center;
+        background-size: contain; 
+        background-repeat: no-repeat; 
+        padding: 2rem 0 2rem 0;
+    }
+
+    .Wrapper-personaje--noseleccionado {
+        width: 40%;
+        margin: 0;
+        margin-top: 9rem;
+    }
+
+    .Wrapper-names {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 10px;
+    }
+
+    .Wrapper-names h3 {
+        font-size: 1.5rem;
+    }
+
+    .character {
+        justify-self: center;
+    }
+
+    .Wrapper-story {
+        background-size:contain;
+        width: 100%;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        min-height: 100vh;
+    }
+
+    .Wrapper-story--h2 {
+        font-size: clamp(1.2rem, 0.0229rem + 1.5267vw, 1.5rem);
+        font-family: 'Karasha';
+        margin: 0 auto;
+        padding: 1rem;
+    }
+
+    .Wrapper-story-text {
+        width: 50%;
+        margin: 0;
+        padding-top: 2rem;
+        line-height: 1.5rem;
+        font-size: clamp(0.8rem, 0.0229rem + 1.5267vw, 1rem);
+    }
+
+    .personaje-imagen {
+        max-width: 90%;
+        height: auto;
+    }
+
+    .Creator {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 1rem;
+    }
+
+    .Wrapper-creator {
+        grid-template-columns: 1fr;
+        grid-template-rows: repeat(8, auto);
+        grid-template-areas:
+            "nombre"
+            "descripcion"
+            "img"
+            "raza"
+            "clase"
+            "nivel"
+            "enviar"
+            "eliminar";
+        gap: 20px;
+    }
+
+    .nombre, .raza, .clase, .nivel, .descripcion, .img, .enviar, .eliminar {
+        width: 100%;
+        margin: 0;
+    }
+
+    
+
+    .Div-links {
+        flex-direction: column;
+        padding-top: 1rem;
+    }
+
+    .Div-links ul {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: center;
+    }
+
+    .Div-p {
+        margin-left: 0;
+        text-align: center;
+        padding-top: 2rem;
+    }
+    .descripcion {
+            width: 100%;
+            min-height: 20vh;
+            margin: 0;
+        }
+
+    .enviar, .eliminar {
+        width: 70%;
+    }
+    }
+

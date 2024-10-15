@@ -1,3 +1,6 @@
+// Componente principal que representa "El origen", primera parte de la historia de la web.
+
+
 import React, { useState } from 'react';
 import arrow from '../../assets/Arrow.png';
 import origin_bunny from '../../assets/bunny_moon.webp';
@@ -7,22 +10,26 @@ import lantern from '../../assets/chihiro_lantern.png';
 import hand from '../../assets/chihiro_hand.png';
 
 export const Origen = () => {
-    const [historia, setHistoria] = useState('primera');
-    const [isFading, setIsFading] = useState(false);
+    // Este es un estado para determinar qué historia se está mostrando (primera o segunda parte)
+    const [historia, setHistoria] = useState('primera')
+
+    // Otro estado, en este caso sería para controlar la animación de desvanecimiento entre la parte primera y segunda de la historia.
+    const [isFading, setIsFading] = useState(false)
 
     const cambiarHistoria = () => {
-        // Añade la clase para que la transición inicie
-        setIsFading(true);
-        
+        setIsFading(true)
+
+    // Función que cambia la historia (primera y segunda)
+
         setTimeout(() => {
-            // Cambia la historia después de la animación
-            setHistoria(historia === 'primera' ? 'segunda' : 'primera');
-            // Elimina el fade para hacer visible la nueva historia
-            setIsFading(false);
-        }, 500); // Duración de la animación, debe coincidir con la transición en el CSS
-    };
+            setHistoria(historia === 'primera' ? 'segunda' : 'primera')
+            setIsFading(false)
+        }, 500)
+    }
 
     return (
+            //Primera parte de la historia
+
         <div className={`Origen-wrapper ${historia}`} id="origen">
             <h2 className='Wrapper-origenh2 left-letter'>El origen</h2>
             <h3 className='Wrapper-origenh3 right-letter'>物語の起源</h3>
@@ -37,7 +44,11 @@ export const Origen = () => {
                         <p className='Wrapper-text--second'>El conejo, agradecido, le pidió un último favor. “Recoge a mi amigo el zorro, por favor”. La deidad aceptó y los dos animales pudieron estar finalmente juntos.</p>
                     </>
                 ) : (
+                     // Segunda parte de la historia
+
                     <>
+
+                    
                         <div className='Wrapper-container'>
                             <img src={origenSlide} alt="other-bunny" className='Wrapper-origen--img' />
                             <img src={lantern} alt="lantern_chihiro" className='Wrapper-origen--lantern' />

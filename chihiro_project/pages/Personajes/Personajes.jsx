@@ -15,8 +15,8 @@ import flowerName from '../../assets/flower_name.png';
 import { useState, useEffect, useRef } from 'react';
 
 export const Personajes = () => {
-
-
+    
+    const { VITE_API, VITE_CHARACTERS, VITE_CHARACTERS_ID, VITE_IMAGE } = import.meta.env;
     // Estados para almacenar los personajes, el personaje seleccionado, y el nombre del archivo subido (por defecto: "No se ha cargado imagen")
     const [personajes, setPersonajes] = useState([])
     const [selectedPersonaje, setSelectedPersonaje] = useState(null)
@@ -30,7 +30,7 @@ export const Personajes = () => {
 
     const pedirPersonajes = async () => {
         try {
-            const response = await fetch('http://localhost:3000/personajes')
+            const response = await fetch(`${VITE_API}${VITE_CHARACTERS}`)
             if (!response.ok) throw new Error('Error fetching personajes')
             const data = await response.json()
             console.log('Datos de la API:', data)
@@ -80,7 +80,9 @@ const manejarFormulario = async (e) => {
         formData.append('imagen', imagen)
     }
  // Si hay un personaje seleccionado, hacemos una petición PUT para actualizar; si no, hacemos una petición POST para crear un personaje nuevo
-    const url = selectedPersonaje ? `http://localhost:3000/personajes/${selectedPersonaje._id}` : "http://localhost:3000/personajes"
+ const url = selectedPersonaje 
+  ? `${VITE_API}${VITE_CHARACTERS}/${selectedPersonaje._id}` 
+  : `${VITE_API}${VITE_CHARACTERS}`;
     const method = selectedPersonaje ? 'PUT' : 'POST'
 
     try {
@@ -111,7 +113,9 @@ const manejarFormulario = async (e) => {
         if (!_id) return // Sin un id no se haría nada
         
         try {
-            const response = await fetch(`http://localhost:3000/personajes/${_id}`, { method: 'DELETE' })
+            const response = await fetch(`${VITE_API}${VITE_CHARACTERS}/${_id}`, {
+                method: 'DELETE',
+            });
             if (!response.ok) throw new Error(`Error eliminando personaje: ${response.statusText}`)
             
             console.log('Personaje eliminado correctamente')
@@ -175,7 +179,7 @@ const manejarFormulario = async (e) => {
         <div className="character">
         {selectedPersonaje && selectedPersonaje.imagen ? (
             <img
-                src={`http://localhost:3000/uploads/${selectedPersonaje.imagen}`}
+                src={`${VITE_API}/uploads/${selectedPersonaje.imagen}`}
                 alt={selectedPersonaje.nombre}
                 className="personaje-imagen"
             />

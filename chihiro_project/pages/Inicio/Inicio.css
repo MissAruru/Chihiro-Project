@@ -3,12 +3,7 @@
   
 }
 
-html, body {
-  height: auto; /* Permitir que el body controle el scroll global */
-  margin: 0;
-  padding: 0;
-  overflow-y: auto; /* Mantener el scroll predeterminado */
-}
+
 .Nav-logo {
     width: 15%;
 }
@@ -123,7 +118,7 @@ html, body {
 .Nav-register--button {  
     background-color: rgb(184, 68, 68);
 }
-
+/* Estilos para dispositivos pequeños como móviles y tablets */
 @media only screen and (max-width: 768px) {
   
   .Wrapper {

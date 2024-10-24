@@ -8,7 +8,6 @@ En el caso de equivocarnos con las contraseñas el sitio está preparado para da
 
 
 
-
 import './login.css'
 import logo from '../../assets/chihiro.png'
 import { useEffect, useState } from 'react'
@@ -76,9 +75,14 @@ export const Login = () => {
 
 
    return (
+   // Formulario de inicio de sesión. El inicio de sesión cuenta con tres usuarios proporcionados en los documentos del proyecto.
+   // Cuando el login da error, este se muestra en el front.
    <>
-   
+
+
     <div className='Form-wrapper'>
+   
+    
     <h1>Sumérgete en el mundo</h1>
         <img src={logo} alt={logo} className='Form-logo' />
         {error && <div className="error-message">{error}</div>}
@@ -95,6 +99,12 @@ export const Login = () => {
                     <button type="submit">Login</button>
                 </div>
         </form>
+    </div>
+    <div className='Form-wrapper--index'>
+    <video autoPlay muted loop id="video-background">
+                    <source src="/videos/petals.mp4" type="video/mp4" />
+                    
+    </video>
     </div>
     </>
    )

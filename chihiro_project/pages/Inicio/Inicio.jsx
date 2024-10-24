@@ -7,6 +7,7 @@
 En el espacio restante tenemos el H1 junto a su breve descripción.
 */
 
+// Importamos todos los elementos necesarios
 
 import './Inicio.css'
 import logo from '../../assets/chihiro_sinlogo.png'
@@ -14,6 +15,8 @@ import { Origen } from '../El_origen/El_origen'
 import { Tragedia } from '../La_tragedia/Tragedia'
 import { Personajes } from '../Personajes/Personajes'
 import { useNavigate } from 'react-router-dom'
+
+// Con esto podemos acceder de nuevo a la zona del login, mediante los botones registrarse e iniciar sesión
 
 export const Inicio = () => {
 
@@ -28,7 +31,7 @@ export const Inicio = () => {
 
     return (
         <>  
-   <div className='Wrapper'>
+   <div className='Wrapper' id='inicio'>
         <nav className='Nav-wrapper'>
           <div className="Nav-logo">
             <img src={logo} alt="Chihiro Logo" />

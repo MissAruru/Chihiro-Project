@@ -1,4 +1,5 @@
 # El reino de Chihiro
+![chihiro_logo](https://i.imgur.com/2kGtwPE.png)
 
 ## Descripción
 
@@ -18,21 +19,20 @@ La página web utiliza una estética inspirada en la fantasía medieval japonesa
 - Interfaz sencilla: Navegación intuitiva y responsive design para una experiencia óptima tanto en dispositivos móviles como en ordenadores.
 - Actualización dinámica: Permite a los usuarios activos actualizar la información de la campaña y ver los cambios en tiempo real.
 
-## Tecnologías empleadas
-
 Para este proyecto se han utilizado las siguientes herramientas:
 
 - Frontend: React.js
-
+![](https://i.imgur.com/T1Zi43u.png)
 - Backend: Node.js con Express.js
-
+![](https://i.imgur.com/Jlo4u4b.png)
 - Base de Datos: MongoDB
-
+![](https://i.imgur.com/tuppZsh.png)
 - Estilos: CSS3 con diseño adaptable a dispositivos móviles
-
+![](https://i.imgur.com/td5NlhZ.png)
 - Control de versiones: Git
-
+![](https://i.imgur.com/McOroyx.png)
 - Herramienta adicional: Mongoose
+![](https://i.imgur.com/4ZTuDdN.png)
 
 
 ## Instalación y uso
@@ -59,7 +59,4 @@ npm start
 
 Este proyecto es parte de un trabajo académico y no está abierto a contribuciones externas en este momento. Sin embargo, cualquier sugerencia o feedback es bienvenido.
 
-## Licencia
-
-Este proyecto está licenciado bajo la MIT License.
  

@@ -1,15 +1,32 @@
+/* Última parte de la web. Dentro de este JSX tenemos:
+
+- Creador de personajes
+- Footer
+
+El creador de personajes contiene un sistema de CRUD, mediante un formulario que podemos rellenar para "crear" nuestros personajes en la historia de Chihiro.
+El creador está pensado para contener hasta 6 personajes, de forma ideal. 
+
+*/
+
+// Comenzamos importando los Hooks e imagenes necesarias para el creador y footer
+
 import './Personajes.css';
 import flowerName from '../../assets/flower_name.png';
 import { useState, useEffect, useRef } from 'react';
 
 export const Personajes = () => {
+
+
+    // Estados para almacenar los personajes, el personaje seleccionado, y el nombre del archivo subido (por defecto: "No se ha cargado imagen")
     const [personajes, setPersonajes] = useState([])
     const [selectedPersonaje, setSelectedPersonaje] = useState(null)
     const [nombreArchivo, setNombreArchivo] = useState("No se ha cargado imagen")
 
-
+    // Usamos una referencia al formulario para usarlo directamente
 
     const formularioRef = useRef(null)
+
+// Con pedirPersonajes hacemos una función asíncrona para obtener la lista de los personajes desde la API:
 
     const pedirPersonajes = async () => {
         try {
@@ -18,6 +35,7 @@ export const Personajes = () => {
             const data = await response.json()
             console.log('Datos de la API:', data)
     
+            // Si es un array se actualiza el estado de los personajes
             if (Array.isArray(data)) {
                 setPersonajes(data)
             } else {
@@ -28,28 +46,28 @@ export const Personajes = () => {
         }
     }
     
-
+// Estado para almacenar la imagen seleccionada
     const [imagen, setImagen] = useState(null)
-
+ // Función del input de archivo (para la imagen del personaje):
     const manejarArchivoImagen = (e) => {
         const file = e.target.files[0]
         setImagen(file)
     
-        
+         // Si hay un archivo, actualizamos el nombre, sino se deja el valor por defecto
         if (file) {
             
-            setNombreArchivo(file.name)
+            setNombreArchivo(file.name) // Mostramos el nombre del archivo
         } else {
             setNombreArchivo("No se ha seleccionado archivo")
         }
     }
     
-
+// Función que maneja el envío del formulario, ya sea para crear o actualizar un personaje
 const manejarFormulario = async (e) => {
     e.preventDefault()
-    const { current: formulario } = formularioRef
+    const { current: formulario } = formularioRef // Referencia al formulario
 
-    
+    // Creamos un FormData para enviar los datos del formulario junto con la imagen
     const formData = new FormData()
     formData.append('nombre', formulario.nombre.value)
     formData.append('raza', formulario.raza.value)
@@ -57,11 +75,11 @@ const manejarFormulario = async (e) => {
     formData.append('nivel', formulario.nivel.value)
     formData.append('descripcion', formulario.descripcion.value)
 
-    
+    // Si hay imagen, la añadimos a los datos
     if (imagen) {
         formData.append('imagen', imagen)
     }
-
+ // Si hay un personaje seleccionado, hacemos una petición PUT para actualizar; si no, hacemos una petición POST para crear un personaje nuevo
     const url = selectedPersonaje ? `http://localhost:3000/personajes/${selectedPersonaje._id}` : "http://localhost:3000/personajes"
     const method = selectedPersonaje ? 'PUT' : 'POST'
 
@@ -72,15 +90,15 @@ const manejarFormulario = async (e) => {
         })
 
         if (!response.ok) throw new Error(`Error ${method === 'PUT' ? 'updating' : 'adding'} personaje: ${response.statusText}`)
-        
+        // Volvemos a pedir la lista de personajes actualizada
         await response.json()
-        console.log('Formulario enviado correctamente')
+        
         
         
         await pedirPersonajes()
-        setSelectedPersonaje(null)
-        formulario.reset()
-        setImagen(null)
+        setSelectedPersonaje(null) //  Limpiamos la selección del personaje
+        formulario.reset() // Reseteamos el formulario
+        setImagen(null) // Despejamos la imagen
     } catch (error) {
         console.error(`Error ${method === 'PUT' ? 'updating' : 'adding'} personaje: ${error.message}`)
     }
@@ -88,9 +106,9 @@ const manejarFormulario = async (e) => {
 
 
     
-    
+    // Función para eliminar un personaje
     const deletePersonaje = async (_id) => {
-        if (!_id) return
+        if (!_id) return // Sin un id no se haría nada
         
         try {
             const response = await fetch(`http://localhost:3000/personajes/${_id}`, { method: 'DELETE' })
@@ -98,9 +116,9 @@ const manejarFormulario = async (e) => {
             
             console.log('Personaje eliminado correctamente')
             
-            
+             // Volvemos a pedir la lista de personajes actualizada
             await pedirPersonajes()
-            setSelectedPersonaje(null)
+            setSelectedPersonaje(null) // Limpiamos la selección del personaje
         } catch (error) {
             console.error('Error eliminando el personaje:', error)
         }
@@ -109,12 +127,12 @@ const manejarFormulario = async (e) => {
     
     
 
-
+// Función para seleccionar un personaje al hacer clic en su nombre
     const handleLetterClick = (personaje) => {
-        setSelectedPersonaje(personaje)
+        setSelectedPersonaje(personaje) // Establecemos el personaje seleccionado
         const { nombre, raza, clase, nivel, descripcion } = personaje
         const { current: formulario } = formularioRef
-
+ // Si el formulario existe, llenamos los campos con los datos del personaje seleccionado
         if (formulario) {
             formulario[0].value = nombre
             formulario[1].value = raza
@@ -125,23 +143,24 @@ const manejarFormulario = async (e) => {
             console.error("Formulario no encontrado en la referencia.")
         }
     }
-
+// Hook useEffect para cargar los personajes al montar el componente
     useEffect(() => {
-        pedirPersonajes()
+        pedirPersonajes() // Cargamos los personajes al cargar el componente
     }, [])
 
     return (
-        <>
-            <div className="Wrapper-personajes" id="protagonistas">
-    <div className="Wrapper-personajes--top top">
-        <h2 className='Wrapper-personajes--h2'>Los protagonistas</h2>
-        <p className='Wrapper-personajes--p'>¡Crea tu personaje e inclúyelo en la historia de Chihiro! Rellena con tus datos tu nombre, raza, clase nivel e historia.</p>
-    </div>
-
-    <div className="Wrapper-names">
-        <ul className="Wrapper-names">
-            {personajes.map((personaje) => (
-                <li
+    <>
+        {/* Sección de personajes */}
+        <div className="Wrapper-personajes" id="protagonistas">
+            <div className="Wrapper-personajes--top top">
+            <h2 className='Wrapper-personajes--h2'>Los protagonistas</h2>
+            <p className='Wrapper-personajes--p'>¡Crea tu personaje e inclúyelo en la historia de Chihiro! Rellena con tus datos tu nombre, raza, clase nivel e historia.</p>
+        </div>
+        {/* Listado de personajes */}
+        <div className="Wrapper-names">
+            <ul className="Wrapper-names">
+                {personajes.map((personaje) => (
+                    <li
                     key={personaje._id}
                     onClick={() => handleLetterClick(personaje)}
                     className="personaje-item"
@@ -151,9 +170,9 @@ const manejarFormulario = async (e) => {
                 </li>
             ))}
         </ul>
-    </div>
-
-    <div className="character">
+        </div>
+        {/* Imagen del personaje seleccionado */}
+        <div className="character">
         {selectedPersonaje && selectedPersonaje.imagen ? (
             <img
                 src={`http://localhost:3000/uploads/${selectedPersonaje.imagen}`}
@@ -166,7 +185,7 @@ const manejarFormulario = async (e) => {
             </div>
         )}
     </div>
-
+    {/* Sección del creador para visualizar los personajes */}
     <div className="Wrapper-story">
         {selectedPersonaje ? (
             <div className='Wrapper-story-text'>
@@ -183,9 +202,9 @@ const manejarFormulario = async (e) => {
 </div>
 
 
-
-            <div className="Creator">
-    <form ref={formularioRef} onSubmit={manejarFormulario} className='Wrapper-creator' encType="multipart/form-data">
+    {/* Formulario para crear, editar o eliminar los personajes */}
+    <div className="Creator">
+        <form ref={formularioRef} onSubmit={manejarFormulario} className='Wrapper-creator' encType="multipart/form-data">
         <input type="text" name="nombre" placeholder='Nombre' className='nombre' />
         <input type="text" name="raza" placeholder='Raza' className='raza' />
         <input type="text" name="clase" placeholder='Clase' className='clase' />
@@ -204,9 +223,9 @@ const manejarFormulario = async (e) => {
             <button type="button" className='eliminar' onClick={() => deletePersonaje(selectedPersonaje._id)}>Eliminar</button>
         )}
     </form>
-</div>
+    </div>
 
-
+    {/* Footer de la página */}
             <footer>
                 <div className='Div-links'>
                     <ul className='Footer-ul'>
@@ -220,6 +239,6 @@ const manejarFormulario = async (e) => {
                     </div>
                 </div>
             </footer>
-        </>
+</>
     )
 }

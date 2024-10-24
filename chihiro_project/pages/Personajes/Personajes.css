@@ -23,7 +23,7 @@
 .Character-wrapper {
     width: 100%;
     padding: 200px 20px; 
-    background-image: url(/assets/cloud_ch.png);
+    background-image: url('/assets/cloud_ch.png');
     background-position: center;
     background-size: contain; 
     background-repeat: no-repeat; 
@@ -40,8 +40,9 @@
 .Wrapper-personajes--top {
     display: flex;
     flex-direction: row;
-    justify-content: space-around;
+    justify-content: space-evenly;
     width: 100%;
+    margin-top: 2rem;
     
 }
 .Wrapper-names {
@@ -89,9 +90,6 @@
     width: 30%;
     font-size: clamp(0.7rem, 0.4137rem + 0.916vw, 1rem);
     color: rgb(50, 11, 11);
-   
-    padding: 20px 20px; 
-
     background-position: center;
     background-size: contain; 
     background-repeat: no-repeat; 
@@ -103,6 +101,16 @@
     color: #D3C0AA;
 }
 
+.Wrapper-personajes--h2::after {
+    background-image: url('/assets/marker.png');
+    position: absolute;
+    display: inline-block;
+    margin-left: 8px;
+    vertical-align: middle;
+}
+
+
+
 .Wrapper-story {
     background-image: url(/assets/pergamino.png);
     background-position: center;
@@ -113,8 +121,8 @@
 
 .Wrapper-story {
     display: flex;
-    align-items: center; /* Centra verticalmente el contenido */
-    justify-content: space-between; /* Espacia el contenido a los lados del contenedor */
+    align-items: center;
+    justify-content: space-between; 
     background-image: url(/assets/pergamino.png);
     background-position: center;
     background-size: contain; 
@@ -158,9 +166,33 @@
     font-family: 'Karasha';
     margin: 0 auto;
     padding: 1rem;
+    text-align: center;
 }
 
+.Wrapper-story--h2::after {
+    content: ""; 
+    background-image: url(/assets/marker.png);
+    background-size: auto; 
+    background-repeat: no-repeat;
+    position: absolute;
+    width: 44px;
+    height: 30px;
+    opacity: 1;
+    z-index: 1;
+}
 
+.Wrapper-story--h2::before {
+    content: ""; 
+    background-image: url(/assets/markerright.png);
+    background-size: cover; 
+    background-repeat: no-repeat;
+    position: absolute;
+    width: 44px;
+    margin-left: -2.2rem;
+    height: 30px;
+    opacity: 1;
+    z-index: 1;
+}
 
 .Creator {
     background-color: #543426;
@@ -284,6 +316,7 @@
 
 .Div-links {
     display: flex;
+    justify-content: space-around;
     background-color:#543426 ;
     padding: 2rem;
 }
@@ -336,7 +369,7 @@
     color: #D39C8A;
 
 }
-
+/* Estilos para dispositivos pequeños como móviles y tablets */
 @media only screen and (max-width: 768px) {
 
     .Wrapper-tragedia--right {
@@ -381,8 +414,8 @@
         background-position: center;
         background-size: contain; 
         background-repeat: no-repeat; 
-        padding: 2rem 0 2rem 0;
     }
+
 
     .Wrapper-personaje--noseleccionado {
         width: 40%;
@@ -417,11 +450,15 @@
     }
 
     .Wrapper-story--h2 {
+        position: relative;
         font-size: clamp(1.2rem, 0.0229rem + 1.5267vw, 1.5rem);
         font-family: 'Karasha';
         margin: 0 auto;
         padding: 1rem;
+        margin-top: 3rem;
     }
+
+   
 
     .Wrapper-story-text {
         width: 50%;

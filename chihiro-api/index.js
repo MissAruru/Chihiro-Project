@@ -16,6 +16,8 @@ require('dotenv').config();
 console.clear()
 console.log(`Iniciando JS`)
 
+const PORT = process.env.PORT || 3000
+
 const express = require('express')
 const cors = require('cors')
 const mongoose = require('mongoose')
@@ -69,4 +71,4 @@ app.use((err, req, res, next) => {
     res.status(500).send('Algo salió mal!')
 })
 
-app.listen(3000, () => console.log(`Iniciando API`))
+app.listen(PORT, () => console.log(`Iniciando API`));

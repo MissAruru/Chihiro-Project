@@ -52,6 +52,11 @@ const router = express.Router()
 router.route('/login')
     .post(postLogin)
 
+// Ruta principal GET /
+router.get('/', (req, res) => {
+    res.send('Haciendo / en GET');
+});
+
 // Aquí definimos la ruta del creador de personajes, en GET y POST.
 
 router.route('/personajes')
@@ -66,21 +71,17 @@ router.route('/personajes/:id')
 
 // A continuación creamos un Middleware para manejar las rutas no encontradas (404)
 
-router.all('*' , ( req , res , next )=>{
-    const err = new Error()
-            err.status     = 404 
-            err.statusText = `No encuentro el Endpoint`
+router.all('*', (req, res, next) => {
+    const err = new Error('No encuentro el Endpoint');
+    err.status = 404;
     next(err)
-    })
-
+})
 // Otro Middleware para manejar errores internos
 
-router.use(( err , req , res , next )=>{
-    let { status , statusText } = err
-            status     = status     || 500
-            statusText = statusText || `Error interno de mi API`
-        res.status(status).json({ status , statusText })
-    })
+router.use((err, req, res, next) => {
+    const { status = 500, statusText = 'Error interno de mi API' } = err
+    res.status(status).json({ status, statusText })
+})
 
     
 // Finalmente se exporta el router para su uso en otras partes de la aplicación.

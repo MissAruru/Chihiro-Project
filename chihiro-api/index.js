@@ -71,4 +71,4 @@ app.use((err, req, res, next) => {
     res.status(500).send('Algo salió mal!')
 })
 
-app.listen(PORT, () => console.log(`Iniciando API`));
+app.listen(PORT, () => console.log(`Iniciando API en ${PORT}`));

@@ -23,11 +23,10 @@ export const Login = () => {
 
     const navigate = useNavigate()
 
-    useEffect( ()=> {
+    useEffect(() => {
         if (login) {
-            navigate('/inicio')
+            navigate(import.meta.env.VITE_REDIRECT)
         }
-
     }, [login, navigate])
 
 

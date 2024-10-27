@@ -56,7 +56,7 @@ export const Login = () => {
     
         try {
            
-            const response = await fetch(`${import.meta.env.VITE_API}${import.meta.env.VITE_LOGIN}`, options)
+            const response = await fetch( VITE_LOGIN, options)
             const data = await response.json();
     
             if (data.login) {

@@ -49,8 +49,7 @@ const router = express.Router()
 
 // Y definimos las rutas, en este caso la de login en post, para poder manejar el inicio de sesión
 
-router.route('/login')
-    .post(postLogin)
+router.post('/login', postLogin);
 
 // Ruta principal GET /
 router.get('/', (req, res) => {

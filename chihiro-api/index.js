@@ -17,7 +17,7 @@ console.clear()
 console.log(`Iniciando JS`)
 
 const PORT = process.env.PORT || 3000
-
+const MONGO = 'mongodb+srv://aroagranjaiglesias:2uprac8aWdX8zOyT@cluster0.15a79.mongodb.net/personajes'
 const express = require('express')
 const cors = require('cors')
 const mongoose = require('mongoose')
@@ -27,7 +27,7 @@ const { router } = require('./router/router')
 
 const conectar = async () => {
     try {
-        await mongoose.connect('mongodb://127.0.0.1:27017/personajes')
+        await mongoose.connect(MONGO)
         console.log(`Conectado a MongoDB`)
     } catch (err) {
         console.log(err);

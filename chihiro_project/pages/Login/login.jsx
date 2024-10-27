@@ -20,7 +20,7 @@ export const Login = () => {
     const [login, setLogin] = useState(false)
     const [error, setError] = useState('')
 
-    const {VITE_LOGIN} = import.meta.env
+   
 
 
     const navigate = useNavigate()
@@ -55,10 +55,9 @@ export const Login = () => {
                 "Content-Type": "application/json"
             }
         };
-    
         try {
            
-            const response = await fetch( VITE_LOGIN, options)
+            const response = await fetch( import.meta.env.LOGIN, options)
             const data = await response.json();
     
             if (data.login) {

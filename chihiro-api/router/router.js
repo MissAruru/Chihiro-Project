@@ -47,6 +47,24 @@ router.get('/', (req, res) => {
     res.send('Haciendo / en GET')
 });
 
+// router.js
+
+router.get('/personajes/:id/imagen', async (req, res) => {
+    try {
+        const personaje = await Personajes.findById(req.params.id)
+
+        if (!personaje || !personaje.imagen) {
+            return res.status(404).send('Imagen no encontrada')
+        }
+
+        res.set('Content-Type', personaje.imagen.contentType)
+        res.send(personaje.imagen.data)
+    } catch (error) {
+        res.status(500).send('Error al obtener la imagen')
+    }
+})
+
+
 // Aquí definimos la ruta del creador de personajes, en GET y POST.
 
 router.route('/personajes')

@@ -16,7 +16,7 @@ import { useState, useEffect, useRef } from 'react';
 
 export const Personajes = () => {
     
-    const { VITE_API, VITE_CHARACTERS, VITE_CHARACTERS_ID, VITE_IMAGE } = import.meta.env;
+    const { VITE_API, VITE_CHARACTERS, VITE_CHARACTERS_ID, VITE_IMAGE_BASE } = import.meta.env;
     // Estados para almacenar los personajes, el personaje seleccionado, y el nombre del archivo subido (por defecto: "No se ha cargado imagen")
     const [personajes, setPersonajes] = useState([])
     const [selectedPersonaje, setSelectedPersonaje] = useState(null)

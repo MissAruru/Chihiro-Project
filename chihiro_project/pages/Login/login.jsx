@@ -26,11 +26,12 @@ export const Login = () => {
     const navigate = useNavigate()
 
     useEffect(() => {
-        console.log('Redirecting to:', import.meta.env.VITE_REDIRECT);
+        console.log('Redirecting to: /')
         if (login) {
-            navigate(import.meta.env.VITE_REDIRECT);
+            navigate('/')
         }
-    }, [login, navigate]);
+    }, [login, navigate])
+    
     
 
 

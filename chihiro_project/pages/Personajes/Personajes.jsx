@@ -21,7 +21,7 @@ export const Personajes = () => {
     const [personajes, setPersonajes] = useState([])
     const [selectedPersonaje, setSelectedPersonaje] = useState(null)
     const [nombreArchivo, setNombreArchivo] = useState("No se ha cargado imagen")
-
+    const [imagen, setImagen] = useState(null);
     // Usamos una referencia al formulario para usarlo directamente
 
     const formularioRef = useRef(null)

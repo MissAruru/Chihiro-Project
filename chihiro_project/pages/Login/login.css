@@ -1,5 +1,14 @@
 /* Estilo para el login */
 
+@font-face {
+    font-family: 'Karasha';
+    src: url('/assets/fonts/Karasha.woff2') format('woff2'),
+         url('/assets/fonts/Karasha.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+
 /* Fondo de video que ocupa toda la pantalla */
 #video-background {
     position: fixed;

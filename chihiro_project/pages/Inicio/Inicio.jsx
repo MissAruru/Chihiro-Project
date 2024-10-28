@@ -24,7 +24,7 @@ export const Inicio = () => {
   const navigate = useNavigate()
 
   const LoginClick = () => {
-    navigate('/')
+    navigate('/login')
   }
 
 

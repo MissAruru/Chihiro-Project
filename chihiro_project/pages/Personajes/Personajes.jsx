@@ -32,7 +32,7 @@ export const Personajes = () => {
 
     const pedirPersonajes = async () => {
         try {
-            const response = await fetch(`${VITE_API}${VITE_CHARACTERS}`)
+            const response = await fetch(`${VITE_CHARACTERS}`)
             if (!response.ok) throw new Error('Error fetching personajes')
             const data = await response.json()
             console.log('Datos de la API:', data)
@@ -83,8 +83,8 @@ const manejarFormulario = async (e) => {
     }
  // Si hay un personaje seleccionado, hacemos una petición PUT para actualizar; si no, hacemos una petición POST para crear un personaje nuevo
  const url = selectedPersonaje 
-  ? `${VITE_API}${VITE_CHARACTERS}/${selectedPersonaje._id}` 
-  : `${VITE_API}${VITE_CHARACTERS}`;
+  ? `${VITE_CHARACTERS}/${selectedPersonaje._id}` 
+  : `${VITE_CHARACTERS}`;
     const method = selectedPersonaje ? 'PUT' : 'POST'
 
     try {
@@ -115,7 +115,7 @@ const manejarFormulario = async (e) => {
         if (!_id) return // Sin un id no se haría nada
         
         try {
-            const response = await fetch(`${VITE_API}${VITE_CHARACTERS}/${_id}`, {
+            const response = await fetch(`${VITE_CHARACTERS}/${selectedPersonaje._id}`, {
                 method: 'DELETE',
             });
             if (!response.ok) throw new Error(`Error eliminando personaje: ${response.statusText}`)

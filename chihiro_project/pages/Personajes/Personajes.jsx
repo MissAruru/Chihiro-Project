@@ -153,7 +153,6 @@ const manejarFormulario = async (e) => {
     useEffect(() => {
         pedirPersonajes() // Cargamos los personajes al cargar el componente
     }, [])
-    console.log(`${VITE_IMAGE_BASE}/${selectedPersonaje.imagen}`);
 
     return (
     <>
@@ -181,11 +180,14 @@ const manejarFormulario = async (e) => {
         {/* Imagen del personaje seleccionado */}
         <div className="character">
         {selectedPersonaje && selectedPersonaje.imagen ? (
-            <img
-                src={`${VITE_IMAGE_BASE}/${selectedPersonaje.imagen.url}`}
-                alt={selectedPersonaje.nombre}
-                className="personaje-imagen"
-            />
+             <>
+             {console.log(`${VITE_IMAGE_BASE}/${selectedPersonaje.imagen.url}`)} {/* Aquí agregamos el console.log */}
+             <img
+                 src={`${VITE_IMAGE_BASE}/${selectedPersonaje.imagen.url}`}
+                 alt={selectedPersonaje.nombre}
+                 className="personaje-imagen"
+             />
+         </>
         ) : (
             <div className="Character-wrapper">
             <p>Haz click en los nombres para ver los personajes</p>

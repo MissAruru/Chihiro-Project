@@ -3,6 +3,14 @@
   
 }
 
+@font-face {
+  font-family: 'Karasha';
+  src: url('/assets/fonts/Karasha.woff2') format('woff2'),
+       url('/assets/fonts/Karasha.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
 
 .Nav-logo {
     width: 15%;

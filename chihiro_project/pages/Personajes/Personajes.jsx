@@ -30,39 +30,45 @@ export const Personajes = () => {
 
 // Con pedirPersonajes hacemos una función asíncrona para obtener la lista de los personajes desde la API:
 
-    const pedirPersonajes = async () => {
-        try {
-            const response = await fetch(`${VITE_CHARACTERS}`)
-            if (!response.ok) throw new Error('Error fetching personajes')
-            const data = await response.json()
-            console.log('Datos de la API:', data)
-    
-            // Si es un array se actualiza el estado de los personajes
-            if (Array.isArray(data)) {
-                setPersonajes(data)
-            } else {
-                console.error('La respuesta de la API después de eliminar no es un array:', data)
-            }
-        } catch (error) {
-            console.error('Error fetching personajes:', error)
-        }
-    }
-    
-// Estado para almacenar la imagen seleccionada
-    const [imagen, setImagen] = useState(null)
- // Función del input de archivo (para la imagen del personaje):
-    const manejarArchivoImagen = (e) => {
-        const file = e.target.files[0]
-        setImagen(file)
-    
-         // Si hay un archivo, actualizamos el nombre, sino se deja el valor por defecto
-        if (file) {
-            
-            setNombreArchivo(file.name) // Mostramos el nombre del archivo
+const pedirPersonajes = async () => {
+    try {
+        const response = await fetch(`${VITE_CHARACTERS}`);
+        if (!response.ok) throw new Error('Error fetching personajes');
+        const data = await response.json();
+        console.log('Datos de la API:', data);
+
+        if (Array.isArray(data)) {
+            // Aquí puedes mapear los datos para agregar la URL de la imagen
+            const personajesConImagen = data.map(personaje => ({
+                ...personaje,
+                imagenUrl: personaje.imagen ? `${VITE_IMAGE_BASE}/${personaje.imagen.url}` : null
+            }));
+            setPersonajes(personajesConImagen);
         } else {
-            setNombreArchivo("No se ha seleccionado archivo")
+            console.error('La respuesta de la API después de eliminar no es un array:', data);
         }
+    } catch (error) {
+        console.error('Error fetching personajes:', error);
     }
+}
+
+const manejarArchivoImagen = (e) => {
+    const file = e.target.files[0];
+    setImagen(file);
+
+    if (file) {
+        setNombreArchivo(file.name);
+        // Aquí puedes crear la URL del objeto para la vista previa
+        const imageUrl = URL.createObjectURL(file);
+        setSelectedPersonaje(prev => ({
+            ...prev,
+            imagenUrl: imageUrl // Agregamos la URL de la imagen seleccionada
+        }));
+    } else {
+        setNombreArchivo("No se ha seleccionado archivo");
+    }
+}
+
     
 // Función que maneja el envío del formulario, ya sea para crear o actualizar un personaje
 const manejarFormulario = async (e) => {

@@ -153,6 +153,7 @@ const manejarFormulario = async (e) => {
     useEffect(() => {
         pedirPersonajes() // Cargamos los personajes al cargar el componente
     }, [])
+    console.log(`${VITE_IMAGE_BASE}/${selectedPersonaje.imagen}`);
 
     return (
     <>

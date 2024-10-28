@@ -32,9 +32,6 @@ export const Login = () => {
         }
     }, [login, navigate])
     
-    
-
-
 
     const formulario = useRef()
 
@@ -62,7 +59,7 @@ export const Login = () => {
            
             const response = await fetch( import.meta.env.VITE_LOGIN, options)
             const data = await response.json();
-    
+            console.log(data)
             if (data.login) {
                 setLogin(true);
                 setError(''); // Limpiar mensaje de error

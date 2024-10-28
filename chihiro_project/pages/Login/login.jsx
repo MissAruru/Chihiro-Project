@@ -27,11 +27,13 @@ export const Login = () => {
     const navigate = useNavigate()
 
     useEffect(() => {
-        console.log('Redirecting to: /')
+        console.log('Login state changed:', login)
         if (login) {
+            console.log('Redirecting to: /')
             navigate('/')
         }
     }, [login, navigate])
+    
     
 
     const formulario = useRef()

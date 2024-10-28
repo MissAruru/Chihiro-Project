@@ -56,25 +56,6 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
 
 app.use(router);
 
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'uploads')
-    },
-    filename: (req, file, cb) => {
-        cb(null, Date.now() + path.extname(file.originalname))
-    }
-})
-
-const upload = multer({ storage: storage });
-
-
-app.post('/upload', upload.single('imagen'), (req, res) => {
-    if (!req.file) {
-        return res.status(400).send('No se ha subido ningún archivo.')
-    }
-    res.status(200).send({ filePath: `uploads/${req.file.filename}` })
-})
-
 
 app.use((err, req, res, next) => {
     console.error(err.stack)

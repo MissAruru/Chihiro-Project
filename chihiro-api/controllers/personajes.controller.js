@@ -45,8 +45,17 @@ const postPersonaje = async (req, res, next) => {
 
         // Crea un nuevo personaje con las características y lo guarda en la base de datos.
 
-        const nuevo = new Personajes({ nombre, nivel, raza, clase, descripcion, imagen })
-        await nuevo.save()
+        const nuevoPersonaje = new Personajes({
+            nombre,
+            nivel,
+            raza,
+            clase,
+            descripcion,
+            imagen: req.file ? req.file.buffer : null, // Convierte la imagen en datos binarios
+            imagenMimeType: req.file ? req.file.mimetype : null // Guarda el tipo MIME de la imagen
+        });
+
+        await nuevoPersonaje.save();
 
         // Devuelve la lista de personajes después de crearlos
 

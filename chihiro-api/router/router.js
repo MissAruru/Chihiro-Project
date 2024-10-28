@@ -13,40 +13,26 @@ const router = express.Router()
 
 // Ahora configuramos el almacenamiento para Multer (subida de imagenes a la web)
 
-// Configuramos el almacenamiento para Multer
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'uploads');
-    },
-    filename: (req, file, cb) => {
-        cb(null, Date.now() + path.extname(file.originalname));
-    },
-});
+// Configuramos el almacenamiento para Multer en memoria
+const storage = multer.memoryStorage(); // Almacena el archivo en memoria temporal
 
-// Filtramos los tipos de archivos que se pueden subir
-const fileFilter = (req, file, cb) => {
-    const allowedTypes = /jpeg|jpg|png|gif/;
-    const isValid = allowedTypes.test(path.extname(file.originalname).toLowerCase());
-    if (isValid) {
-        cb(null, true);
-    } else {
-        cb(new Error('Solo se permiten archivos de imagen (jpeg, jpg, png, gif)'));
-    }
-};
-
-// Limitamos el tamaño y peso de las imágenes
+// Configuramos Multer con límites de tamaño y filtros de archivo
 const upload = multer({
     storage: storage,
-    fileFilter: fileFilter,
     limits: { fileSize: 5 * 1024 * 1024 }, // 5MB como máximo
-});
+    fileFilter: (req, file, cb) => {
+        const allowedTypes = /jpeg|jpg|png|gif/
+        const isValid = allowedTypes.test(path.extname(file.originalname).toLowerCase())
+        cb(isValid ? null : new Error('Solo se permiten archivos de imagen (jpeg, jpg, png, gif)'), isValid)
+    }
+})
 
-// Definimos las rutas
+// Definimos la ruta para subir archivos (con almacenamiento en memoria)
 router.post('/upload', upload.single('imagen'), (req, res) => {
     if (!req.file) {
         return res.status(400).send('No se ha subido ningún archivo.');
     }
-    res.status(200).send({ filePath: `uploads/${req.file.filename}` });
+    res.status(200).send({ message: 'Imagen subida en memoria', file: req.file });
 });
 // Creamos un router de Express
 

@@ -22,7 +22,8 @@ const personajesSchema = new mongoose.Schema(
         raza: String,
         clase: String,
         descripcion: String,
-        imagen: String,
+        imagen: Buffer, // Nuevo campo para almacenar la imagen como datos binarios
+        imagenMimeType: String // Campo opcional para el tipo MIME de la imagen
     },
 
     // Toda la colección es de tipo String a excepción de nivel que sería tipo Number.

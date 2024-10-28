@@ -135,14 +135,14 @@
     background-position: center;
     background-size: contain; 
     background-repeat: no-repeat;
-    width: 95%; 
+    width: 90%; 
     height: auto; 
     min-height: 80vh; 
 }
 
 .Wrapper-story-text {
     width: 60%;
-    margin-left: 5rem;
+    margin-left: 6rem;
     font-size: clamp(0.6rem, 0.3275rem + 1.8321vw, 1rem);
 }
 

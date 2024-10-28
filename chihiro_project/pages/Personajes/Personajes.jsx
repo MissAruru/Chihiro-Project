@@ -26,6 +26,8 @@ export const Personajes = () => {
 
     const formularioRef = useRef(null)
 
+    console.log(VITE_API, VITE_CHARACTERS);
+
 // Con pedirPersonajes hacemos una función asíncrona para obtener la lista de los personajes desde la API:
 
     const pedirPersonajes = async () => {

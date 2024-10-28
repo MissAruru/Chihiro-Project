@@ -19,7 +19,6 @@ console.log(`Iniciando JS`)
 const PORT = process.env.PORT || 3000
 const MONGO = process.env.MONGO_URI;
 const express = require('express')
-const cors = require('cors')
 const mongoose = require('mongoose')
 const multer = require('multer')
 const path = require('path')
@@ -41,14 +40,15 @@ const conectar = async () => {
 conectar()
 
 const app = express()
+const cors = require('cors')
 
-app.use(cors())
-app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', 'https://chihiro-project-final.vercel.app'); // o '*'
-    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Content-Type');
-    next();
-});
+
+const corsOptions = {
+    origin: 'https://chihiro-project-final.vercel.app',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type'],
+};
+app.use(cors(corsOptions))
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')))

@@ -26,10 +26,12 @@ export const Login = () => {
     const navigate = useNavigate()
 
     useEffect(() => {
+        console.log('Redirecting to:', import.meta.env.VITE_REDIRECT);
         if (login) {
-            navigate(import.meta.env.VITE_REDIRECT)
+            navigate(import.meta.env.VITE_REDIRECT);
         }
-    }, [login, navigate])
+    }, [login, navigate]);
+    
 
 
 
@@ -57,7 +59,7 @@ export const Login = () => {
         };
         try {
            
-            const response = await fetch( import.meta.env.LOGIN, options)
+            const response = await fetch( import.meta.env.VITE_LOGIN, options)
             const data = await response.json();
     
             if (data.login) {

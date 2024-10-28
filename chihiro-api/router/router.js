@@ -49,11 +49,11 @@ const router = express.Router()
 
 // Y definimos las rutas, en este caso la de login en post, para poder manejar el inicio de sesión
 
-router.post('/login', postLogin);
+router.post('/login', postLogin)
 
 // Ruta principal GET /
 router.get('/', (req, res) => {
-    res.send('Haciendo / en GET');
+    res.send('Haciendo / en GET')
 });
 
 // Aquí definimos la ruta del creador de personajes, en GET y POST.

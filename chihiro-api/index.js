@@ -17,22 +17,26 @@ console.clear()
 console.log(`Iniciando JS`)
 
 const PORT = process.env.PORT || 3000
-const MONGO = 'mongodb+srv://aroagranjaiglesias:2uprac8aWdX8zOyT@cluster0.15a79.mongodb.net/personajes'
+const MONGO = process.env.MONGO_URI;
 const express = require('express')
 const cors = require('cors')
 const mongoose = require('mongoose')
 const multer = require('multer')
 const path = require('path')
 const { router } = require('./router/router')
+const fs = require('fs');
+
 
 const conectar = async () => {
     try {
-        await mongoose.connect(MONGO)
-        console.log(`Conectado a MongoDB`)
+        await mongoose.connect(MONGO);
+        console.log(`Conectado a MongoDB`);
     } catch (err) {
-        console.log(err);
+        console.log(`Error de conexión a MongoDB: ${err}`);
+        process.exit(1);
     }
-}
+};
+
 
 conectar()
 
@@ -71,4 +75,8 @@ app.use((err, req, res, next) => {
     res.status(500).send('Algo salió mal!')
 })
 
-app.listen(PORT, () => console.log(`Iniciando API en ${PORT}`));
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(PORT, () => console.log(`Iniciando API en ${PORT}`));
+}
+
+module.exports = app;

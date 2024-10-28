@@ -30,7 +30,7 @@ export const Login = () => {
         console.log('Login state changed:', login)
         if (login) {
             console.log('Redirecting to: /')
-            navigate('/')
+            navigate('/inicio')
         }
     }, [login, navigate])
     

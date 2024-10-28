@@ -181,7 +181,7 @@ const manejarFormulario = async (e) => {
         <div className="character">
         {selectedPersonaje && selectedPersonaje.imagen ? (
             <img
-                src={`${VITE_API}/uploads/${selectedPersonaje.imagen}`}
+                src={`${VITE_IMAGE_BASE}/${selectedPersonaje.imagen}`}
                 alt={selectedPersonaje.nombre}
                 className="personaje-imagen"
             />

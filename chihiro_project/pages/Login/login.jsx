@@ -102,7 +102,6 @@ export const Login = () => {
                 </div>
                 <div className="Form-wrapper--button submit">
                     <button type="submit">Login</button>
-                    <button onClick={() => navigate('/inicio')}>Ir a Inicio</button>
                 </div>
         </form>
     </div>

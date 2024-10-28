@@ -1,7 +1,6 @@
 @font-face {
     font-family: 'Karasha';
-    src: url('/assets/fonts/Karasha.woff2') format('woff2'),
-         url('/assets/fonts/Karasha.woff') format('woff');
+    src: url('/assets/fonts/Karasha.ttf') format('ttf');
     font-weight: normal;
     font-style: normal;
 }

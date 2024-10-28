@@ -181,7 +181,7 @@ const manejarFormulario = async (e) => {
         <div className="character">
         {selectedPersonaje && selectedPersonaje.imagen ? (
              <>
-             {console.log(`${VITE_IMAGE_BASE}/${selectedPersonaje.imagen.url}`)} {/* Aquí agregamos el console.log */}
+             {console.log(selectedPersonaje)}
              <img
                  src={`${VITE_IMAGE_BASE}/${selectedPersonaje.imagen.url}`}
                  alt={selectedPersonaje.nombre}

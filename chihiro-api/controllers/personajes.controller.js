@@ -52,7 +52,6 @@ const postPersonaje = async (req, res, next) => {
             raza,
             clase,
             descripcion,
-            imagen: req.file ? req.file.buffer : null,
             imagenUrl
         })
         // Guarda el personaje primero para generar el `_id`
@@ -75,30 +74,19 @@ const postPersonaje = async (req, res, next) => {
 
 const putPersonaje = async (req, res, next) => {
     try {
-        const id = req.params.id // Se obtiene el ID del personaje a actualizar.
+        const personajeActualizado = await Personajes.findByIdAndUpdate(
+            req.params.id, 
+            req.body,
+            { new: true } // Esto devolverá el documento actualizado
+        );
 
-        // Verifica que el ID sea válido
-        if (!mongoose.Types.ObjectId.isValid(id)) {
-            return res.status(400).json({ message: 'ID inválido' })
-            // Devuelve un error 400 si el ID no es válido
-        }
-
-        const personajeId = new mongoose.Types.ObjectId(id) // Convierte el ID a un ObjectId de Mongoose
-        const updateData = {
-            ...req.body, // Obtiene los datos
-            imagenUrl: req.file ? `https://chihiro-api.vercel.app/uploads/${req.file.filename}` : undefined // También se actualiza la imagen si se obtiene una nueva.
-        }
-
-        // Busca y actualiza el personaje en la base de datos
-
-        const personajeActualizado = await Personajes.findByIdAndUpdate(personajeId, updateData, { new: true })
         if (!personajeActualizado) {
-            return res.status(404).json({ message: 'Personaje no encontrado' })  // Devuelve un error 404 si no se encuentra el personaje
+            return res.status(404).send('Personaje no encontrado');
         }
-        res.json(personajeActualizado) // Devuelve el personaje actualizado
+
+        res.json(personajeActualizado)
     } catch (error) {
-        console.error('Error al actualizar el personaje:', error.message) // Console.log de error
-        next(error) // Pasa el error al siguiente Middleware
+        res.status(500).send('Error al actualizar el personaje');
     }
 }
 

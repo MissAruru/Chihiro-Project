@@ -13,8 +13,16 @@ const router = express.Router()
 
 // Ahora configuramos el almacenamiento para Multer (subida de imagenes a la web)
 
-// Configuramos el almacenamiento para Multer en memoria
-const storage = multer.memoryStorage(); // Almacena el archivo en memoria temporal
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads/'); // Ajusta la ruta donde deseas almacenar las imágenes
+    },
+    filename: (req, file, cb) => {
+        const ext = path.extname(file.originalname);
+        cb(null, `${Date.now()}${ext}`); // Asigna un nombre único a cada archivo
+    },
+});
+
 
 // Configuramos Multer con límites de tamaño y filtros de archivo
 const upload = multer({
@@ -37,7 +45,6 @@ router.post('/upload', upload.single('imagen'), (req, res) => {
 // Creamos un router de Express
 
 
-
 // Y definimos las rutas, en este caso la de login en post, para poder manejar el inicio de sesión
 
 router.post('/login', postLogin)
@@ -52,17 +59,14 @@ router.get('/', (req, res) => {
 router.get('/personajes/:id/imagen', async (req, res) => {
     try {
         const personaje = await Personajes.findById(req.params.id)
-
-        if (!personaje || !personaje.imagen) {
+        if (!personaje || !personaje.imagenUrl) {
             return res.status(404).send('Imagen no encontrada')
         }
-
-        res.set('Content-Type', personaje.imagenMimeType);
-        res.send(personaje.imagen);
+        res.redirect(personaje.imagenUrl)
     } catch (error) {
         res.status(500).send('Error al obtener la imagen')
     }
-})
+});
 
 
 // Aquí definimos la ruta del creador de personajes, en GET y POST.

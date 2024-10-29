@@ -58,11 +58,11 @@ const manejarArchivoImagen = (e) => {
 
     if (file) {
         setNombreArchivo(file.name);
-        // Aquí puedes crear la URL del objeto para la vista previa
+        // Crear la URL del objeto para la vista previa
         const imageUrl = URL.createObjectURL(file);
         setSelectedPersonaje(prev => ({
             ...prev,
-            imagenUrl: imageUrl // Agregamos la URL de la imagen seleccionada
+            imagenUrl: imageUrl // Actualizar la URL de la imagen seleccionada
         }));
     } else {
         setNombreArchivo("No se ha seleccionado archivo");
@@ -187,23 +187,19 @@ const manejarFormulario = async (e) => {
         </div>
         {/* Imagen del personaje seleccionado */}
         <div className="character">
-        {selectedPersonaje && selectedPersonaje.imagen ? (
-             <>
-             {console.log(selectedPersonaje)}
-             <img
-    src={selectedPersonaje.imagenUrl ? selectedPersonaje.imagenUrl : 'ruta/de/imagen/por/defecto.jpg'}
-    alt={selectedPersonaje.nombre}
-    className="personaje-imagen"
-/>
-
-
-         </>
-        ) : (
-            <div className="Character-wrapper">
-            <p>Haz click en los nombres para ver los personajes</p>
-            </div>
-        )}
-    </div>
+                    {selectedPersonaje && (
+                        <img
+                            src={selectedPersonaje.imagenUrl ? selectedPersonaje.imagenUrl : 'ruta/de/imagen/por/defecto.jpg'}
+                            alt={selectedPersonaje.nombre}
+                            className="personaje-imagen"
+                        />
+                    )}
+                    {!selectedPersonaje && (
+                        <div className="Character-wrapper">
+                            <p>Haz click en los nombres para ver los personajes</p>
+                        </div>
+                    )}
+                </div>
     {/* Sección del creador para visualizar los personajes */}
     <div className="Wrapper-story">
         {selectedPersonaje ? (

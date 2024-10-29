@@ -22,7 +22,7 @@ const upload = multer({
 });
 
 // Ruta para subir archivos
-router.post('/upload', upload.single('imagen'), async (req, res) => {
+router.post('/uploads', upload.single('imagen'), async (req, res) => {
     if (!req.file) {
         return res.status(400).send('No se ha subido ningún archivo.');
     }

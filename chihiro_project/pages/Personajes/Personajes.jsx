@@ -69,8 +69,6 @@ const manejarArchivoImagen = (e) => {
         setNombreArchivo("No se ha seleccionado archivo");
     }
 }
-console.log([...formData]); 
-
     
 // Función que maneja el envío del formulario, ya sea para crear o actualizar un personaje
 const manejarFormulario = async (e) => {
@@ -89,8 +87,10 @@ const manejarFormulario = async (e) => {
     if (imagen) {
         formData.append('imagen', imagen)
     }
-    console.log('Personaje seleccionado:', selectedPersonaje);
 
+    console.log('Selected Personaje:', selectedPersonaje);
+    console.log('Personaje ID:', selectedPersonaje._id);
+    
  // Si hay un personaje seleccionado, hacemos una petición PUT para actualizar; si no, hacemos una petición POST para crear un personaje nuevo
  const url = selectedPersonaje 
   ? `${VITE_CHARACTERS}/${selectedPersonaje._id}` 

@@ -51,9 +51,10 @@ const postPersonaje = async (req, res, next) => {
             raza,
             clase,
             descripcion,
-            imagen: req.file ? req.file.buffer : null, // Convierte la imagen en datos binarios
-            imagenMimeType: req.file ? req.file.mimetype : null // Guarda el tipo MIME de la imagen
-        });
+            imagen: req.file ? req.file.buffer : null,
+            imagenMimeType: req.file ? req.file.mimetype : null,
+            imagenUrl: req.file ? `/personajes/${nuevoPersonaje._id}/imagen` : null 
+        })
 
         await nuevoPersonaje.save();
 

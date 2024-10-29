@@ -208,16 +208,19 @@ const manejarFormulario = async (e) => {
         </div>
         {/* Imagen del personaje seleccionado */}
         <div className="character">
-                    {selectedPersonaje && (
-                        <img src={personaje.imagenUrl} alt={personaje.nombre} className="personaje-imagen" />
-
-                    )}
-                    {!selectedPersonaje && (
-                        <div className="Character-wrapper">
-                            <p>Haz click en los nombres para ver los personajes</p>
-                        </div>
-                    )}
-                </div>
+    {selectedPersonaje && (
+        <img
+            src={selectedPersonaje.imagenUrl} // Usa selectedPersonaje en lugar de personaje
+            alt={selectedPersonaje.nombre} // Usa selectedPersonaje aquí también
+            className="personaje-imagen"
+        />
+    )}
+    {!selectedPersonaje && (
+        <div className="Character-wrapper">
+            <p>Haz click en los nombres para ver los personajes</p>
+        </div>
+    )}
+</div>
     {/* Sección del creador para visualizar los personajes */}
     <div className="Wrapper-story">
         {selectedPersonaje ? (

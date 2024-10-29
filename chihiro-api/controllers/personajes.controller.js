@@ -22,8 +22,9 @@ const getPersonaje = async (req, res, next) => {
         // Convierte el _id en string
         
         const personajesFormatted = personajes.map(p => ({
-            ...p._doc, 
-            _id: p._id.toString() 
+            ...p._doc,
+            _id: p._id.toString(),
+            imagenUrl: p.imagen ? `/personajes/${p._id}/imagen` : null
         }))
 
         // Y devuelve la lista de personajes formateada.

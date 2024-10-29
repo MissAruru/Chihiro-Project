@@ -41,6 +41,7 @@ const getPersonaje = async (req, res, next) => {
 
 const postPersonaje = async (req, res, next) => {
     const { nombre, nivel, raza, clase, descripcion } = req.body;
+    console.log(req.file);
 
     try {
         const imagenUrl = req.file ? `https://chihiro-api.vercel.app/uploads/${req.file.filename}` : null;

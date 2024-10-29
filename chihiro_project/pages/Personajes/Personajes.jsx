@@ -60,6 +60,7 @@ const manejarArchivoImagen = (e) => {
         setNombreArchivo(file.name);
         // Crear la URL del objeto para la vista previa
         const imageUrl = URL.createObjectURL(file);
+        console.log('Imagen URL:', imageUrl); // Verificar la URL de la imagen
         setSelectedPersonaje(prev => ({
             ...prev,
             imagenUrl: imageUrl // Actualizar la URL de la imagen seleccionada
@@ -139,11 +140,16 @@ const manejarFormulario = async (e) => {
     }
     
     
-    
+    const seleccionarPersonaje = (personaje) => {
+        setSelectedPersonaje({
+            ...personaje,  // Asegúrate de que esto incluya todos los campos necesarios
+            imagenUrl: personaje.imagenUrl || null // Asegúrate de que tenga el campo imagenUrl
+        });
+    };
 
 // Función para seleccionar un personaje al hacer clic en su nombre
     const handleLetterClick = (personaje) => {
-        setSelectedPersonaje(personaje) // Establecemos el personaje seleccionado
+        seleccionarPersonaje(personaje); // Establecemos el personaje seleccionado
         const { nombre, raza, clase, nivel, descripcion } = personaje
         const { current: formulario } = formularioRef
  // Si el formulario existe, llenamos los campos con los datos del personaje seleccionado

@@ -57,8 +57,8 @@ router.get('/personajes/:id/imagen', async (req, res) => {
             return res.status(404).send('Imagen no encontrada')
         }
 
-        res.set('Content-Type', personaje.imagen.contentType)
-        res.send(personaje.imagen.data)
+        res.set('Content-Type', personaje.imagenMimeType);
+        res.send(personaje.imagen);
     } catch (error) {
         res.status(500).send('Error al obtener la imagen')
     }

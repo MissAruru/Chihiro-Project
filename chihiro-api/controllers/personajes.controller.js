@@ -7,6 +7,7 @@ const mongoose = require('mongoose')
 const multer = require('multer')
 const path = require('path')
 const cloudinary = require('../config/cloudinary')
+const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 
@@ -52,8 +53,18 @@ const postPersonaje = async (req, res, next) => {
         }
 
         // Sube la imagen a Cloudinary
-        const result = await cloudinary.uploader.upload_stream({ resource_type: 'image' })
-            .end(req.file.buffer);
+        const result = await new Promise((resolve, reject) => {
+            const stream = cloudinary.uploader.upload_stream(
+                { resource_type: 'image' },
+                (error, result) => {
+                    if (error) {
+                        return reject(error);
+                    }
+                    resolve(result);
+                }
+            );
+            stream.end(req.file.buffer); // Enviar el buffer de la imagen a Cloudinary
+        });
 
         const nuevoPersonaje = new Personajes({
             nombre,
@@ -66,7 +77,6 @@ const postPersonaje = async (req, res, next) => {
 
         await nuevoPersonaje.save();
 
-        // Devuelve la lista de personajes después de crearlos
         const personajes = await Personajes.find();
         res.json(personajes);
     } catch (error) {
@@ -76,16 +86,14 @@ const postPersonaje = async (req, res, next) => {
 }
 
 
+
 // Controlador para actualizar un personaje ya creado en método PUT
 
 const putPersonaje = async (req, res) => {
     try {
-        const id = req.params.id.trim(); // Eliminar espacios y saltos de línea
+        const id = req.params.id.trim();
 
-        console.log('Datos de la solicitud:', req.body);
-        console.log('ID del personaje:', id); // Agrega un log aquí
-        const updateData = {}; // Inicializa updateData aquí
-        // Si hay una imagen, súbela a Cloudinary
+        const updateData = {};
         if (req.file) {
             const result = await new Promise((resolve, reject) => {
                 const stream = cloudinary.uploader.upload_stream(
@@ -104,8 +112,8 @@ const putPersonaje = async (req, res) => {
 
         // Actualizar personaje en MongoDB
         const personajeActualizado = await Personajes.findByIdAndUpdate(
-            req.params.id.trim(), // Asegurarse de que no haya saltos de línea o espacios en el ID
-            updateData,
+            id,
+            { ...req.body, ...updateData }, // Asegúrate de incluir los datos que se van a actualizar
             { new: true }
         );
 
@@ -119,6 +127,7 @@ const putPersonaje = async (req, res) => {
         res.status(500).json({ message: 'Error al actualizar el personaje', error: error.message });
     }
 };
+
 
 
 

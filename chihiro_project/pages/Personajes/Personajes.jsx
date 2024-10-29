@@ -88,15 +88,16 @@ const manejarFormulario = async (e) => {
         formData.append('imagen', imagen)
     }
 
-    console.log('Selected Personaje:', selectedPersonaje);
-    console.log('Personaje ID:', selectedPersonaje._id);
+
+  
     
  // Si hay un personaje seleccionado, hacemos una petición PUT para actualizar; si no, hacemos una petición POST para crear un personaje nuevo
  const url = selectedPersonaje 
   ? `${VITE_CHARACTERS}/${selectedPersonaje._id}` 
   : `${VITE_CHARACTERS}`;
     const method = selectedPersonaje ? 'PUT' : 'POST'
-
+    console.log('Selected Personaje:', selectedPersonaje); // Verifica el objeto
+    console.log('ID del personaje:', selectedPersonaje?._id); // Verifica el ID
     try {
         const response = await fetch(url, {
             method,

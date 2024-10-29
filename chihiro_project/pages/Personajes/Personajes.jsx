@@ -107,7 +107,9 @@ const manejarFormulario = async (e) => {
         if (!response.ok) throw new Error(`Error ${method === 'PUT' ? 'updating' : 'adding'} personaje: ${response.statusText}`)
         // Volvemos a pedir la lista de personajes actualizada
         await response.json()
-        
+        const data = await response.json();
+console.log('Datos devueltos:', data); // Para verificar qué devuelve el servidor
+
         
         
         await pedirPersonajes()

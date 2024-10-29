@@ -40,11 +40,10 @@ const getPersonaje = async (req, res, next) => {
 // Controlador para crear un nuevo personaje en método POST
 
 const postPersonaje = async (req, res, next) => {
-    const { nombre, nivel, raza, clase, descripcion } = req.body
-    
+    const { nombre, nivel, raza, clase, descripcion } = req.body;
+
     try {
         const imagenUrl = req.file ? `https://chihiro-api.vercel.app/uploads/${req.file.filename}` : null;
-        // Crea un nuevo personaje con las características y lo guarda en la base de datos.
 
         const nuevoPersonaje = new Personajes({
             nombre,
@@ -53,36 +52,34 @@ const postPersonaje = async (req, res, next) => {
             clase,
             descripcion,
             imagenUrl
-        })
-        // Guarda el personaje primero para generar el `_id`
+        });
+
         await nuevoPersonaje.save();
 
-        // Ahora que el personaje tiene `_id`, se asigna `imagenUrl`
-        nuevoPersonaje.imagenUrl = `https://chihiro-api.vercel.app/uploads/${nuevoPersonaje._id}.${imagenExtension}`;
-
         // Devuelve la lista de personajes después de crearlos
-
-        const personajes = await Personajes.find()
-        res.json(personajes)
+        const personajes = await Personajes.find();
+        res.json(personajes);
     } catch (error) {
-        console.error('Error al crear el personaje:', error.message) // Se visualizan los errores mediante un console.log
-        next(error) // Pasa el error al siguiente Middleware
+        console.error('Error al crear el personaje:', error.message);
+        res.status(500).json({ message: 'Error al crear el personaje', error: error.message });
     }
 }
+
+
 
 // Controlador para actualizar un personaje ya creado en método PUT
 
 const putPersonaje = async (req, res) => {
     try {
-        const updateData = { ...req.body }; // Copiamos los datos del cuerpo
+        const updateData = { ...req.body };
         if (req.file) {
-            updateData.imagenUrl = `/uploads/${req.file.filename}`; // Establece la URL de la imagen
+            updateData.imagenUrl = `https://chihiro-api.vercel.app/uploads/${req.file.filename}`; // Cambia a la URL correcta
         }
 
         const personajeActualizado = await Personajes.findByIdAndUpdate(
-            req.params.id, 
+            req.params.id,
             updateData,
-            { new: true } // Esto devolverá el documento actualizado
+            { new: true }
         );
 
         if (!personajeActualizado) {
@@ -91,10 +88,11 @@ const putPersonaje = async (req, res) => {
 
         res.json(personajeActualizado);
     } catch (error) {
-        console.error('Error al actualizar el personaje:', error);
-        res.status(500).send('Error al actualizar el personaje');
+        console.error('Error al actualizar el personaje:', error.message);
+        res.status(500).json({ message: 'Error al actualizar el personaje', error: error.message }); // Respuesta de error más clara
     }
 }
+
 
 
 // Controlador para eliminar un personaje

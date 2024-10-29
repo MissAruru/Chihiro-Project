@@ -189,8 +189,8 @@ const manejarFormulario = async (e) => {
              <>
              {console.log(selectedPersonaje)}
              <img
-    src={selectedPersonaje.imagenUrl ? `${VITE_IMAGE_BASE}/${selectedPersonaje.imagenUrl}` : 'ruta/de/imagen/por/defecto.jpg'}
-    alt={selectedPersonaje.nombre}
+    src={selectedPersonaje?.imagenUrl ? `${VITE_IMAGE_BASE}${selectedPersonaje.imagenUrl}` : 'ruta/de/imagen/por/defecto.jpg'}
+    alt={selectedPersonaje?.nombre || 'Personaje'}
     className="personaje-imagen"
 />
 

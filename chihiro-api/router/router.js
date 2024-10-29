@@ -40,6 +40,8 @@ router.post('/upload', upload.single('imagen'), (req, res) => {
     if (!req.file) {
         return res.status(400).send('No se ha subido ningún archivo.');
     }
+    console.log('Archivo subido:', req.file);
+
     res.status(200).send({ message: 'Imagen subida en memoria', file: req.file });
 });
 // Creamos un router de Express

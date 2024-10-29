@@ -152,10 +152,14 @@ const manejarFormulario = async (e) => {
     
     
     const seleccionarPersonaje = (personaje) => {
-        setSelectedPersonaje({
-            ...personaje,  // Asegúrate de que esto incluya todos los campos necesarios
-            imagenUrl: personaje.imagenUrl || null // Asegúrate de que tenga el campo imagenUrl
-        });
+        if (personaje && personaje._id) { // Aseguramos que personaje y su ID existan
+            setSelectedPersonaje({
+                ...personaje,
+                imagenUrl: personaje.imagenUrl || null
+            });
+        } else {
+            console.error('Personaje no válido o sin ID');
+        }
     };
 
 // Función para seleccionar un personaje al hacer clic en su nombre

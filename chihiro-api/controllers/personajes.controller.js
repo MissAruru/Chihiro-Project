@@ -26,7 +26,7 @@ const getPersonaje = async (req, res, next) => {
         const personajesFormatted = personajes.map(p => ({
             ...p._doc,
             _id: p._id.toString(),
-            imagenUrl: p.imagenExtension ? `https://chihiro-api.vercel.app/uploads/${p._id}.${p.imagenExtension}` : null
+            imagenUrl: p.imagenExtension ? `https://chihiro-api-sigma.vercel.app/uploads/${p._id}.${p.imagenExtension}` : null
         }))
 
         // Y devuelve la lista de personajes formateada.
@@ -47,7 +47,7 @@ const postPersonaje = async (req, res, next) => {
     console.log(req.file);
 
     try {
-        const imagenUrl = req.file ? `https://chihiro-api.vercel.app/uploads/${req.file.filename}` : null;
+        const imagenUrl = req.file ? `https://chihiro-api-sigma.vercel.app/uploads/${req.file.filename}` : null;
 
         const nuevoPersonaje = new Personajes({
             nombre,

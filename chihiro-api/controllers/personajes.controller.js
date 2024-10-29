@@ -72,18 +72,31 @@ const postPersonaje = async (req, res, next) => {
 
 const putPersonaje = async (req, res) => {
     try {
+        const id = req.params.id.trim(); // Eliminar espacios y saltos de línea
+
         console.log('Datos de la solicitud:', req.body);
+        console.log('ID del personaje:', id); // Agrega un log aquí
+
+        // Si hay una imagen, súbela a Cloudinary
         if (req.file) {
-            console.log('Archivo de imagen:', req.file);
+            const result = await new Promise((resolve, reject) => {
+                const stream = cloudinary.uploader.upload_stream(
+                    { resource_type: 'image' },
+                    (error, result) => {
+                        if (error) {
+                            return reject(error);
+                        }
+                        resolve(result);
+                    }
+                );
+                stream.end(req.file.buffer); // Enviar el buffer de la imagen a Cloudinary
+            });
+            updateData.imagenUrl = result.secure_url; // Guardar la URL segura de Cloudinary
         }
 
-        const updateData = { ...req.body };
-        if (req.file) {
-            updateData.imagenUrl = `https://chihiro-api.vercel.app/uploads/${req.file.filename}`;
-        }
-
+        // Actualizar personaje en MongoDB
         const personajeActualizado = await Personajes.findByIdAndUpdate(
-            req.params.id,
+            req.params.id.trim(), // Asegurarse de que no haya saltos de línea o espacios en el ID
             updateData,
             { new: true }
         );
@@ -97,7 +110,8 @@ const putPersonaje = async (req, res) => {
         console.error('Error al actualizar el personaje:', error.message);
         res.status(500).json({ message: 'Error al actualizar el personaje', error: error.message });
     }
-}
+};
+
 
 
 

@@ -69,6 +69,7 @@ const manejarArchivoImagen = (e) => {
         setNombreArchivo("No se ha seleccionado archivo");
     }
 }
+console.log([...formData]); 
 
     
 // Función que maneja el envío del formulario, ya sea para crear o actualizar un personaje

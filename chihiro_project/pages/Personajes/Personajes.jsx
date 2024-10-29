@@ -1,280 +1,222 @@
-/* Última parte de la web. Dentro de este JSX tenemos:
-
-- Creador de personajes
-- Footer
-
-El creador de personajes contiene un sistema de CRUD, mediante un formulario que podemos rellenar para "crear" nuestros personajes en la historia de Chihiro.
-El creador está pensado para contener hasta 6 personajes, de forma ideal. 
-
-*/
-
-// Comenzamos importando los Hooks e imagenes necesarias para el creador y footer
-
 import './Personajes.css';
 import flowerName from '../../assets/flower_name.png';
 import { useState, useEffect, useRef } from 'react';
 
 export const Personajes = () => {
-    
     const { VITE_API, VITE_CHARACTERS, VITE_CHARACTERS_ID, VITE_IMAGE_BASE } = import.meta.env;
-    // Estados para almacenar los personajes, el personaje seleccionado, y el nombre del archivo subido (por defecto: "No se ha cargado imagen")
-    const [personajes, setPersonajes] = useState([])
-    const [selectedPersonaje, setSelectedPersonaje] = useState(null)
-    const [nombreArchivo, setNombreArchivo] = useState("No se ha cargado imagen")
+    const [personajes, setPersonajes] = useState([]);
+    const [selectedPersonaje, setSelectedPersonaje] = useState(null);
+    const [nombreArchivo, setNombreArchivo] = useState("No se ha cargado imagen");
     const [imagen, setImagen] = useState(null);
-    // Usamos una referencia al formulario para usarlo directamente
+    const formularioRef = useRef(null);
 
-    const formularioRef = useRef(null)
+    const pedirPersonajes = async () => {
+        try {
+            const response = await fetch(`${VITE_CHARACTERS}`);
+            if (!response.ok) throw new Error('Error fetching personajes');
+            const data = await response.json();
+            if (Array.isArray(data)) {
+                const personajesConImagen = data.map(personaje => ({
+                    ...personaje,
+                    imagenUrl: personaje.imagen ? `${VITE_IMAGE_BASE}/${personaje.imagen.url}` : null
+                }));
+                setPersonajes(personajesConImagen);
+            }
+        } catch (error) {
+            console.error('Error fetching personajes:', error);
+        }
+    }
 
-    console.log(VITE_API, VITE_CHARACTERS);
+    const manejarArchivoImagen = (e) => {
+        const file = e.target.files[0];
+        setImagen(file);
 
-// Con pedirPersonajes hacemos una función asíncrona para obtener la lista de los personajes desde la API:
-
-const pedirPersonajes = async () => {
-    try {
-        const response = await fetch(`${VITE_CHARACTERS}`);
-        if (!response.ok) throw new Error('Error fetching personajes');
-        const data = await response.json();
-        console.log('Datos de la API:', data);
-
-        if (Array.isArray(data)) {
-            // Aquí puedes mapear los datos para agregar la URL de la imagen
-            const personajesConImagen = data.map(personaje => ({
-                ...personaje,
-                imagenUrl: personaje.imagen ? `${VITE_IMAGE_BASE}/${personaje.imagen.url}` : null
-            }));
-            setPersonajes(personajesConImagen);
+        if (file) {
+            setNombreArchivo(file.name);
+            const imageUrl = URL.createObjectURL(file);
+            if (selectedPersonaje) {
+                setSelectedPersonaje(prev => ({
+                    ...prev,
+                    imagenUrl: imageUrl // Actualizar la URL de la imagen seleccionada
+                }));
+            }
         } else {
-            console.error('La respuesta de la API después de eliminar no es un array:', data);
+            setNombreArchivo("No se ha seleccionado archivo");
         }
-    } catch (error) {
-        console.error('Error fetching personajes:', error);
-    }
-}
-
-const manejarArchivoImagen = (e) => {
-    const file = e.target.files[0];
-    setImagen(file);
-
-    if (file) {
-        setNombreArchivo(file.name);
-        // Crear la URL del objeto para la vista previa
-        const imageUrl = URL.createObjectURL(file);
-        console.log('Imagen URL:', imageUrl); // Verificar la URL de la imagen
-        setSelectedPersonaje(prev => ({
-            ...prev,
-            imagenUrl: imageUrl // Actualizar la URL de la imagen seleccionada
-        }));
-    } else {
-        setNombreArchivo("No se ha seleccionado archivo");
-    }
-}
-    
-// Función que maneja el envío del formulario, ya sea para crear o actualizar un personaje
-const manejarFormulario = async (e) => {
-    e.preventDefault();
-    const { current: formulario } = formularioRef; // Referencia al formulario
-
-    // Creamos un FormData para enviar los datos del formulario junto con la imagen
-    const formData = new FormData();
-    formData.append('nombre', formulario.nombre.value);
-    formData.append('raza', formulario.raza.value);
-    formData.append('clase', formulario.clase.value);
-    formData.append('nivel', formulario.nivel.value);
-    formData.append('descripcion', formulario.descripcion.value);
-
-    // Si hay imagen, la añadimos a los datos
-    if (imagen) {
-        formData.append('imagen', imagen);
-    } else {
-        console.warn('No se ha seleccionado ninguna imagen.');
     }
 
-    // Si hay un personaje seleccionado, hacemos una petición PUT para actualizar; si no, hacemos una petición POST para crear un personaje nuevo
-    const url = selectedPersonaje 
-        ? `${VITE_CHARACTERS}/${selectedPersonaje._id}` 
-        : `${VITE_CHARACTERS}`;
-    const method = selectedPersonaje ? 'PUT' : 'POST';
+    const manejarFormulario = async (e) => {
+        e.preventDefault();
+        const { current: formulario } = formularioRef;
 
-    console.log('Selected Personaje:', selectedPersonaje); // Verifica el objeto
-    console.log('ID del personaje:', selectedPersonaje?._id); // Verifica el ID
+        const formData = new FormData();
+        formData.append('nombre', formulario.nombre.value);
+        formData.append('raza', formulario.raza.value);
+        formData.append('clase', formulario.clase.value);
+        formData.append('nivel', formulario.nivel.value);
+        formData.append('descripcion', formulario.descripcion.value);
 
-    try {
-        const response = await fetch(url, {
-            method,
-            body: formData 
-        });
-
-        if (!response.ok) {
-            // Obtener el mensaje de error si no se pudo completar la solicitud
-            const errorMessage = await response.text(); // Intentar leer el cuerpo de la respuesta
-            throw new Error(`Error ${method === 'PUT' ? 'updating' : 'adding'} personaje: ${errorMessage}`);
+        if (imagen) {
+            formData.append('imagen', imagen);
+        } else {
+            console.warn('No se ha seleccionado ninguna imagen.');
         }
 
-        const data = await response.json(); // Leer la respuesta JSON
-        console.log('Datos devueltos:', data); // Para verificar qué devuelve el servidor
-        if (data._id) {
-        console.log('Nuevo ID:', data._id); // Verificar si el ID es válido
+        const url = selectedPersonaje 
+            ? `${VITE_CHARACTERS}/${selectedPersonaje._id}` 
+            : `${VITE_CHARACTERS}`;
+        const method = selectedPersonaje ? 'PUT' : 'POST';
+
+        try {
+            const response = await fetch(url, {
+                method,
+                body: formData 
+            });
+
+            if (!response.ok) {
+                const errorMessage = await response.text(); 
+                throw new Error(`Error ${method === 'PUT' ? 'updating' : 'adding'} personaje: ${errorMessage}`);
+            }
+
+            const data = await response.json();
+            await pedirPersonajes();
+            setSelectedPersonaje(null);
+            formulario.reset();
+            setImagen(null); // Limpiar la imagen aquí
+            setNombreArchivo("No se ha cargado imagen"); // Reiniciar el nombre del archivo
+        } catch (error) {
+            console.error(`Error ${method === 'PUT' ? 'updating' : 'adding'} personaje: ${error.message}`);
         }
+    };
 
-        // Volvemos a pedir la lista de personajes actualizada
-        await pedirPersonajes();
-        setSelectedPersonaje(null); // Limpiamos la selección del personaje
-        formulario.reset(); // Reseteamos el formulario
-        setImagen(null); // Despejamos la imagen
-    } catch (error) {
-        console.error(`Error ${method === 'PUT' ? 'updating' : 'adding'} personaje: ${error.message}`);
-    }
-};
-
-
-
-    
-    // Función para eliminar un personaje
     const deletePersonaje = async (_id) => {
-        if (!_id) return // Sin un id no se haría nada
+        if (!_id) return; 
         
         try {
-            const response = await fetch(`${VITE_CHARACTERS}/${selectedPersonaje._id}`, {
+            const response = await fetch(`${VITE_CHARACTERS}/${_id}`, {
                 method: 'DELETE',
             });
-            if (!response.ok) throw new Error(`Error eliminando personaje: ${response.statusText}`)
+            if (!response.ok) throw new Error(`Error eliminando personaje: ${response.statusText}`);
             
-            console.log('Personaje eliminado correctamente')
-            
-             // Volvemos a pedir la lista de personajes actualizada
-            await pedirPersonajes()
-            setSelectedPersonaje(null) // Limpiamos la selección del personaje
+            await pedirPersonajes();
+            setSelectedPersonaje(null);
         } catch (error) {
-            console.error('Error eliminando el personaje:', error)
+            console.error('Error eliminando el personaje:', error);
         }
     }
-    
-    
+
     const seleccionarPersonaje = (personaje) => {
-        if (personaje && personaje._id) { // Aseguramos que personaje y su ID existan
+        if (personaje && personaje._id) {
             setSelectedPersonaje({
                 ...personaje,
                 imagenUrl: personaje.imagenUrl || null
             });
+            // Actualizar el formulario con los datos del personaje seleccionado
+            const { current: formulario } = formularioRef;
+            if (formulario) {
+                formulario.nombre.value = personaje.nombre;
+                formulario.raza.value = personaje.raza;
+                formulario.clase.value = personaje.clase;
+                formulario.nivel.value = personaje.nivel;
+                formulario.descripcion.value = personaje.descripcion;
+                setNombreArchivo(personaje.imagen ? personaje.imagen.url : "No se ha cargado imagen");
+            }
         } else {
             console.error('Personaje no válido o sin ID');
         }
     };
 
-// Función para seleccionar un personaje al hacer clic en su nombre
-    const handleLetterClick = (personaje) => {
-        seleccionarPersonaje(personaje); // Establecemos el personaje seleccionado
-        const { nombre, raza, clase, nivel, descripcion } = personaje
-        const { current: formulario } = formularioRef
- // Si el formulario existe, llenamos los campos con los datos del personaje seleccionado
-        if (formulario) {
-            formulario[0].value = nombre
-            formulario[1].value = raza
-            formulario[2].value = clase
-            formulario[3].value = nivel
-            formulario[4].value = descripcion
-        } else {
-            console.error("Formulario no encontrado en la referencia.")
-        }
-    }
-// Hook useEffect para cargar los personajes al montar el componente
     useEffect(() => {
-        pedirPersonajes() // Cargamos los personajes al cargar el componente
-    }, [])
+        pedirPersonajes();
+    }, []);
 
     return (
-    <>
-        {/* Sección de personajes */}
-        <div className="Wrapper-personajes" id="protagonistas">
-            <div className="Wrapper-personajes--top top">
-            <h2 className='Wrapper-personajes--h2'>Los protagonistas</h2>
-            <p className='Wrapper-personajes--p'>¡Crea tu personaje e inclúyelo en la historia de Chihiro! Rellena con tus datos tu nombre, raza, clase nivel e historia.</p>
-        </div>
-        {/* Listado de personajes */}
-        <div className="Wrapper-names">
-            <ul className="Wrapper-names">
-                {personajes.map((personaje) => (
-                    <li
-                    key={personaje._id}
-                    onClick={() => handleLetterClick(personaje)}
-                    className="personaje-item"
-                    style={{ backgroundImage: `url(${flowerName})` }}
-                >
-                    {personaje.nombre}
-                </li>
-            ))}
-        </ul>
-        </div>
-        {/* Imagen del personaje seleccionado */}
-        <div className="character">
-    {selectedPersonaje && (
-        <img
-            src={selectedPersonaje.imagenUrl} // Usa selectedPersonaje en lugar de personaje
-            alt={selectedPersonaje.nombre} // Usa selectedPersonaje aquí también
-            className="personaje-imagen"
-        />
-    )}
-    {!selectedPersonaje && (
-        <div className="Character-wrapper">
-            <p>Haz click en los nombres para ver los personajes</p>
-        </div>
-    )}
-</div>
-    {/* Sección del creador para visualizar los personajes */}
-    <div className="Wrapper-story">
-        {selectedPersonaje ? (
-            <div className='Wrapper-story-text'>
-                <h2 className='Wrapper-story--h2'>{selectedPersonaje.nombre}</h2>
-                <p>Raza: {selectedPersonaje.raza}</p>
-                <p>Clase: {selectedPersonaje.clase}</p>
-                <p>Nivel: {selectedPersonaje.nivel}</p>
-                <p>Descripción: {selectedPersonaje.descripcion}</p>
+        <>
+            {/* Sección de personajes */}
+            <div className="Wrapper-personajes" id="protagonistas">
+                <div className="Wrapper-personajes--top top">
+                    <h2 className='Wrapper-personajes--h2'>Los protagonistas</h2>
+                    <p className='Wrapper-personajes--p'>¡Crea tu personaje e inclúyelo en la historia de Chihiro! Rellena con tus datos tu nombre, raza, clase nivel e historia.</p>
+                </div>
+                {/* Listado de personajes */}
+                <div className="Wrapper-names">
+                    <ul className="Wrapper-names">
+                        {personajes.map((personaje) => (
+                            <li
+                                key={personaje._id}
+                                onClick={() => seleccionarPersonaje(personaje)}
+                                className="personaje-item"
+                                style={{ backgroundImage: `url(${flowerName})` }}
+                            >
+                                {personaje.nombre}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+                {/* Imagen del personaje seleccionado */}
+                <div className="character">
+                    {selectedPersonaje && (
+                        <img
+                            src={selectedPersonaje.imagenUrl}
+                            alt={selectedPersonaje.nombre}
+                            className="personaje-imagen"
+                        />
+                    )}
+                    {!selectedPersonaje && (
+                        <div className="Character-wrapper">
+                            <p>Haz click en los nombres para ver los personajes</p>
+                        </div>
+                    )}
+                </div>
+                {/* Sección del creador para visualizar los personajes */}
+                <div className="Wrapper-story">
+                    {selectedPersonaje ? (
+                        <div className='Wrapper-story-text'>
+                            <h2 className='Wrapper-story--h2'>{selectedPersonaje.nombre}</h2>
+                            <p>Raza: {selectedPersonaje.raza}</p>
+                            <p>Clase: {selectedPersonaje.clase}</p>
+                            <p>Nivel: {selectedPersonaje.nivel}</p>
+                            <p>Descripción: {selectedPersonaje.descripcion}</p>
+                        </div>
+                    ) : (
+                        <p className='Wrapper-personaje--noseleccionado'>Sugerimos un máximo de 285 caracteres.</p>
+                    )}
+                </div>
             </div>
-        ) : (
-            <p className='Wrapper-personaje--noseleccionado'>Sugerimos un máximo de 285 carácteres.</p>
-        )}
-    </div>
-</div>
 
+            {/* Formulario para crear, editar o eliminar los personajes */}
+            <div className="Creator">
+                <form ref={formularioRef} onSubmit={manejarFormulario} className='Wrapper-creator' encType="multipart/form-data">
+                    <input type="text" name="nombre" placeholder='Nombre' className='nombre' />
+                    <input type="text" name="raza" placeholder='Raza' className='raza' />
+                    <input type="text" name="clase" placeholder='Clase' className='clase' />
+                    <input type="text" name="nivel" placeholder='Nivel' className='nivel' />
+                    <textarea maxLength={285} name="descripcion" placeholder='Escribe la historia de tu personaje aquí' className='descripcion'></textarea>
+                    
+                    <div className="Wrapper-img--personaje">
+                        <input type="text" value={nombreArchivo} readOnly className="input-fake" />
+                        <input type="file" id="imagen" name="imagen" className="imagen" onChange={manejarArchivoImagen} />
+                        <label htmlFor="imagen">Seleccionar archivo</label>
+                    </div>
 
-    {/* Formulario para crear, editar o eliminar los personajes */}
-    <div className="Creator">
-        <form ref={formularioRef} onSubmit={manejarFormulario} className='Wrapper-creator' encType="multipart/form-data">
-        <input type="text" name="nombre" placeholder='Nombre' className='nombre' />
-        <input type="text" name="raza" placeholder='Raza' className='raza' />
-        <input type="text" name="clase" placeholder='Clase' className='clase' />
-        <input type="text" name="nivel" placeholder='Nivel' className='nivel' />
-        <textarea maxLength={285} name="descripcion" placeholder='Escribe la historia de tu personaje aquí' className='descripcion'></textarea>
-        
-        <div className="Wrapper-img--personaje">
-        <input type="text" value={nombreArchivo} readOnly className="input-fake" />
-        <input type="file" id="imagen" name="imagen" className="imagen" onChange={manejarArchivoImagen} />
-        <label htmlFor="imagen">Seleccionar archivo</label>
-        </div>
+                    <input type="submit" value="Enviar" className='enviar' />
+                    {selectedPersonaje && (
+                        <button type="button" className='eliminar' onClick={() => deletePersonaje(selectedPersonaje._id)}>Eliminar</button>
+                    )}
+                </form>
+            </div>
 
-
-        <input type="submit" value="Enviar" className='enviar' />
-        {selectedPersonaje && (
-            <button type="button" className='eliminar' onClick={() => deletePersonaje(selectedPersonaje._id)}>Eliminar</button>
-        )}
-    </form>
-    </div>
-
-    {/* Footer de la página */}
+            {/* Footer de la página */}
             <footer>
                 <div className='Div-links'>
                     <ul className='Footer-ul'>
                         <li className='Footer-li'><a href="#inicio">Inicio</a></li>
-                        <li className='Footer-li'><a href="#origen">El origen</a></li>
-                        <li className='Footer-li'><a href="#tragedia">La tragedia</a></li>
-                        <li className='Footer-li'><a href="#protagonistas">Los protagonistas</a></li>
+                        <li className='Footer-li'><a href="#protagonistas">Personajes</a></li>
+                        <li className='Footer-li'><a href="#historias">Historias</a></li>
+                        <li className='Footer-li'><a href="#contacto">Contacto</a></li>
                     </ul>
-                    <div className='Div-ul'>
-                        <p className='Div-p'>El reino de Chihiro © 2024</p>
-                    </div>
                 </div>
             </footer>
-</>
-    )
-}
+        </>
+    );
+};

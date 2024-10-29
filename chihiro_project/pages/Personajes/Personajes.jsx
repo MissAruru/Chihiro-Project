@@ -111,8 +111,11 @@ const manejarFormulario = async (e) => {
             throw new Error(`Error ${method === 'PUT' ? 'updating' : 'adding'} personaje: ${errorMessage}`);
         }
 
-        const data = await response.json(); // Leer la respuesta JSON solo una vez
+        const data = await response.json(); // Leer la respuesta JSON
         console.log('Datos devueltos:', data); // Para verificar qué devuelve el servidor
+        if (data._id) {
+        console.log('Nuevo ID:', data._id); // Verificar si el ID es válido
+        }
 
         // Volvemos a pedir la lista de personajes actualizada
         await pedirPersonajes();

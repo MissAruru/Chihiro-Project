@@ -45,6 +45,7 @@ const postPersonaje = async (req, res, next) => {
     try {
         const imagenBuffer = req.file ? req.file.buffer : null;
         const imagenMimeType = req.file ? req.file.mimetype : null;
+        let imagenExtension = ''
         // Crea un nuevo personaje con las características y lo guarda en la base de datos.
 
         const nuevoPersonaje = new Personajes({
@@ -53,14 +54,15 @@ const postPersonaje = async (req, res, next) => {
             raza,
             clase,
             descripcion,
-            imagen: imagenBuffer,
-            imagenMimeType: imagenMimeType
+            imagen: req.file ? req.file.buffer : null,
+            imagenMimeType: req.file ? req.file.mimetype : null,
         })
         // Guarda el personaje primero para generar el `_id`
         await nuevoPersonaje.save();
 
         // Ahora que el personaje tiene `_id`, se asigna `imagenUrl`
-        nuevoPersonaje.imagenUrl = req.file ? `/personajes/${nuevoPersonaje._id}/imagen` : null;
+        nuevoPersonaje.imagenUrl = `https://chihiro-api.vercel.app/uploads/${nuevoPersonaje._id}.${imagenExtension}`;
+
         // Devuelve la lista de personajes después de crearlos
 
         const personajes = await Personajes.find()

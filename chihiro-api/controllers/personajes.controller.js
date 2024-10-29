@@ -24,7 +24,7 @@ const getPersonaje = async (req, res, next) => {
         const personajesFormatted = personajes.map(p => ({
             ...p._doc,
             _id: p._id.toString(),
-            imagenUrl: p.imagen ? `/personajes/${p._id}/imagen` : null
+            imagenUrl: p.imagenExtension ? `https://chihiro-api.vercel.app/uploads/${p._id}.${p.imagenExtension}` : null
         }))
 
         // Y devuelve la lista de personajes formateada.

@@ -13,7 +13,6 @@ const upload = multer({ storage: storage });
 
 const controller = new AbortController()
 
-const cloudinary = require('./config/cloudinary'); // Ajusta la ruta según sea necesario
 
 cloudinary.api.resources()
     .then(result => {

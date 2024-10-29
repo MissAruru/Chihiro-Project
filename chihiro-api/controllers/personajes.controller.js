@@ -78,7 +78,7 @@ const putPersonaje = async (req, res) => {
         }
 
         const personajeActualizado = await Personajes.findByIdAndUpdate(
-            req.params.id,
+            id,
             updateData,
             { new: true }
         );

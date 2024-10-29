@@ -37,7 +37,7 @@ router.post('/uploads', upload.single('imagen'), async (req, res) => {
             });
             stream.end(req.file.buffer); // Aquí estamos enviando el buffer de la imagen a Cloudinary
         });
-
+        console.log('Resultado de Cloudinary:', result)
         // Aquí puedes guardar result.secure_url en la base de datos
         res.status(200).send({ message: 'Imagen subida a Cloudinary', file: result });
     } catch (error) {

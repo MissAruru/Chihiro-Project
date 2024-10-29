@@ -209,11 +209,8 @@ const manejarFormulario = async (e) => {
         {/* Imagen del personaje seleccionado */}
         <div className="character">
                     {selectedPersonaje && (
-                        <img
-                            src={selectedPersonaje.imagenUrl ? selectedPersonaje.imagenUrl : 'ruta/de/imagen/por/defecto.jpg'}
-                            alt={selectedPersonaje.nombre}
-                            className="personaje-imagen"
-                        />
+                        <img src={personaje.imagenUrl} alt={personaje.nombre} className="personaje-imagen" />
+
                     )}
                     {!selectedPersonaje && (
                         <div className="Character-wrapper">

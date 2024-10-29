@@ -28,20 +28,24 @@ router.post('/upload', upload.single('imagen'), async (req, res) => {
     }
 
     try {
-        const result = await cloudinary.uploader.upload_stream({ resource_type: 'image' }, (error, result) => {
-            if (error) {
-                return res.status(500).send('Error subiendo la imagen a Cloudinary.');
-            }
-            res.status(200).send({ message: 'Imagen subida a Cloudinary', file: result });
+        const result = await new Promise((resolve, reject) => {
+            const stream = cloudinary.uploader.upload_stream({ resource_type: 'image' }, (error, result) => {
+                if (error) {
+                    return reject(error);
+                }
+                resolve(result);
+            });
+            stream.end(req.file.buffer); // Aquí estamos enviando el buffer de la imagen a Cloudinary
         });
 
-        const stream = cloudinary.uploader.upload_stream(result);
-        stream.end(req.file.buffer); // Aquí estamos enviando el buffer de la imagen a Cloudinary
+        // Aquí puedes guardar result.secure_url en la base de datos
+        res.status(200).send({ message: 'Imagen subida a Cloudinary', file: result });
     } catch (error) {
         console.error('Error en la subida a Cloudinary:', error);
         res.status(500).send('Error al subir la imagen');
     }
 });
+
 
 // Ruta para login
 router.post('/login', postLogin);

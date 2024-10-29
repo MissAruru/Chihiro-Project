@@ -72,11 +72,16 @@ const postPersonaje = async (req, res, next) => {
 
 // Controlador para actualizar un personaje ya creado en método PUT
 
-const putPersonaje = async (req, res, next) => {
+const putPersonaje = async (req, res) => {
     try {
+        const updateData = { ...req.body }; // Copiamos los datos del cuerpo
+        if (req.file) {
+            updateData.imagenUrl = `/uploads/${req.file.filename}`; // Establece la URL de la imagen
+        }
+
         const personajeActualizado = await Personajes.findByIdAndUpdate(
             req.params.id, 
-            req.body,
+            updateData,
             { new: true } // Esto devolverá el documento actualizado
         );
 
@@ -84,11 +89,13 @@ const putPersonaje = async (req, res, next) => {
             return res.status(404).send('Personaje no encontrado');
         }
 
-        res.json(personajeActualizado)
+        res.json(personajeActualizado);
     } catch (error) {
+        console.error('Error al actualizar el personaje:', error);
         res.status(500).send('Error al actualizar el personaje');
     }
 }
+
 
 // Controlador para eliminar un personaje
 

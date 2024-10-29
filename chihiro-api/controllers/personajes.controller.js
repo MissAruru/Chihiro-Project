@@ -72,12 +72,15 @@ const postPersonaje = async (req, res, next) => {
 
 const putPersonaje = async (req, res) => {
     try {
+        console.log('Datos de la solicitud:', req.body);
+        if (req.file) {
+            console.log('Archivo de imagen:', req.file);
+        }
+
         const updateData = { ...req.body };
         if (req.file) {
             updateData.imagenUrl = `https://chihiro-api.vercel.app/uploads/${req.file.filename}`;
         }
-
-        console.log('Datos a actualizar:', updateData);
 
         const personajeActualizado = await Personajes.findByIdAndUpdate(
             req.params.id,
@@ -94,7 +97,7 @@ const putPersonaje = async (req, res) => {
         console.error('Error al actualizar el personaje:', error.message);
         res.status(500).json({ message: 'Error al actualizar el personaje', error: error.message });
     }
-};
+}
 
 
 

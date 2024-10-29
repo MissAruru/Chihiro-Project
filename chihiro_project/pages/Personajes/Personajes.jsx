@@ -1,19 +1,19 @@
 import './Personajes.css';
-import flowerName from '../../assets/flower_name.png';
-import { useState, useEffect, useRef } from 'react';
+import flowerName from '../../assets/flower_name.png'
+import { useState, useEffect, useRef } from 'react'
 
 export const Personajes = () => {
-    const { VITE_API, VITE_CHARACTERS, VITE_CHARACTERS_ID, VITE_IMAGE_BASE } = import.meta.env;
+    const { VITE_API, VITE_CHARACTERS, VITE_CHARACTERS_ID, VITE_IMAGE_BASE } = import.meta.env
     const [personajes, setPersonajes] = useState([]);
-    const [selectedPersonaje, setSelectedPersonaje] = useState(null);
-    const [nombreArchivo, setNombreArchivo] = useState("No se ha cargado imagen");
-    const [imagen, setImagen] = useState(null);
-    const formularioRef = useRef(null);
+    const [selectedPersonaje, setSelectedPersonaje] = useState(null)
+    const [nombreArchivo, setNombreArchivo] = useState("No se ha cargado imagen")
+    const [imagen, setImagen] = useState(null)
+    const formularioRef = useRef(null)
 
     const pedirPersonajes = async () => {
         try {
-            const response = await fetch(`${VITE_CHARACTERS}`);
-            if (!response.ok) throw new Error('Error fetching personajes');
+            const response = await fetch(`${VITE_CHARACTERS}`)
+            if (!response.ok) throw new Error('Error fetching personajes')
             const data = await response.json();
             if (Array.isArray(data)) {
                 const personajesConImagen = data.map(personaje => ({

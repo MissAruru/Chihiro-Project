@@ -24,7 +24,7 @@ const multer = require('multer')
 const path = require('path')
 const { router } = require('./router/router')
 const fs = require('fs');
-
+const cors = require('cors')
 
 const conectar = async () => {
     try {
@@ -40,7 +40,7 @@ const conectar = async () => {
 conectar()
 
 const app = express()
-const cors = require('cors')
+
 
 
 const corsOptions = {

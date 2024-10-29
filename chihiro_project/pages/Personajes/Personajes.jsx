@@ -72,54 +72,56 @@ const manejarArchivoImagen = (e) => {
     
 // Función que maneja el envío del formulario, ya sea para crear o actualizar un personaje
 const manejarFormulario = async (e) => {
-    e.preventDefault()
-    const { current: formulario } = formularioRef // Referencia al formulario
+    e.preventDefault();
+    const { current: formulario } = formularioRef; // Referencia al formulario
 
     // Creamos un FormData para enviar los datos del formulario junto con la imagen
-    const formData = new FormData()
-    formData.append('nombre', formulario.nombre.value)
-    formData.append('raza', formulario.raza.value)
-    formData.append('clase', formulario.clase.value)
-    formData.append('nivel', formulario.nivel.value)
-    formData.append('descripcion', formulario.descripcion.value)
+    const formData = new FormData();
+    formData.append('nombre', formulario.nombre.value);
+    formData.append('raza', formulario.raza.value);
+    formData.append('clase', formulario.clase.value);
+    formData.append('nivel', formulario.nivel.value);
+    formData.append('descripcion', formulario.descripcion.value);
 
     // Si hay imagen, la añadimos a los datos
     if (imagen) {
-        formData.append('imagen', imagen)
+        formData.append('imagen', imagen);
     }
 
+    // Si hay un personaje seleccionado, hacemos una petición PUT para actualizar; si no, hacemos una petición POST para crear un personaje nuevo
+    const url = selectedPersonaje 
+        ? `${VITE_CHARACTERS}/${selectedPersonaje._id}` 
+        : `${VITE_CHARACTERS}`;
+    const method = selectedPersonaje ? 'PUT' : 'POST';
 
-  
-    
- // Si hay un personaje seleccionado, hacemos una petición PUT para actualizar; si no, hacemos una petición POST para crear un personaje nuevo
- const url = selectedPersonaje 
-  ? `${VITE_CHARACTERS}/${selectedPersonaje._id}` 
-  : `${VITE_CHARACTERS}`;
-    const method = selectedPersonaje ? 'PUT' : 'POST'
     console.log('Selected Personaje:', selectedPersonaje); // Verifica el objeto
     console.log('ID del personaje:', selectedPersonaje?._id); // Verifica el ID
+
     try {
         const response = await fetch(url, {
             method,
             body: formData 
-        })
+        });
 
-        if (!response.ok) throw new Error(`Error ${method === 'PUT' ? 'updating' : 'adding'} personaje: ${response.statusText}`)
+        if (!response.ok) {
+            // Obtener el mensaje de error si no se pudo completar la solicitud
+            const errorMessage = await response.text(); // Intentar leer el cuerpo de la respuesta
+            throw new Error(`Error ${method === 'PUT' ? 'updating' : 'adding'} personaje: ${errorMessage}`);
+        }
+
+        const data = await response.json(); // Leer la respuesta JSON solo una vez
+        console.log('Datos devueltos:', data); // Para verificar qué devuelve el servidor
+
         // Volvemos a pedir la lista de personajes actualizada
-        await response.json()
-        const data = await response.json();
-console.log('Datos devueltos:', data); // Para verificar qué devuelve el servidor
-
-        
-        
-        await pedirPersonajes()
-        setSelectedPersonaje(null) //  Limpiamos la selección del personaje
-        formulario.reset() // Reseteamos el formulario
-        setImagen(null) // Despejamos la imagen
+        await pedirPersonajes();
+        setSelectedPersonaje(null); // Limpiamos la selección del personaje
+        formulario.reset(); // Reseteamos el formulario
+        setImagen(null); // Despejamos la imagen
     } catch (error) {
-        console.error(`Error ${method === 'PUT' ? 'updating' : 'adding'} personaje: ${error.message}`)
+        console.error(`Error ${method === 'PUT' ? 'updating' : 'adding'} personaje: ${error.message}`);
     }
-}
+};
+
 
 
     

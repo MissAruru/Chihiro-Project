@@ -19,7 +19,7 @@ const getPersonaje = async (req, res, next) => {
         const personajes = await Personajes.find()
         
 
-        // Convierte el _id en string
+        // Convierte el _id en string y genera la URL de la imagen
         
         const personajesFormatted = personajes.map(p => ({
             ...p._doc,
@@ -43,9 +43,7 @@ const postPersonaje = async (req, res, next) => {
     const { nombre, nivel, raza, clase, descripcion } = req.body
     
     try {
-        const imagenBuffer = req.file ? req.file.buffer : null;
-        const imagenMimeType = req.file ? req.file.mimetype : null;
-        let imagenExtension = ''
+        const imagenUrl = req.file ? `https://chihiro-api.vercel.app/uploads/${req.file.filename}` : null;
         // Crea un nuevo personaje con las características y lo guarda en la base de datos.
 
         const nuevoPersonaje = new Personajes({
@@ -55,7 +53,7 @@ const postPersonaje = async (req, res, next) => {
             clase,
             descripcion,
             imagen: req.file ? req.file.buffer : null,
-            imagenMimeType: req.file ? req.file.mimetype : null,
+            imagenUrl
         })
         // Guarda el personaje primero para generar el `_id`
         await nuevoPersonaje.save();
@@ -88,7 +86,7 @@ const putPersonaje = async (req, res, next) => {
         const personajeId = new mongoose.Types.ObjectId(id) // Convierte el ID a un ObjectId de Mongoose
         const updateData = {
             ...req.body, // Obtiene los datos
-            imagen: req.file ? req.file.filename : undefined // También se actualiza la imagen si se obtiene una nueva.
+            imagenUrl: req.file ? `https://chihiro-api.vercel.app/uploads/${req.file.filename}` : undefined // También se actualiza la imagen si se obtiene una nueva.
         }
 
         // Busca y actualiza el personaje en la base de datos

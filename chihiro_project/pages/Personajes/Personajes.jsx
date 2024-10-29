@@ -87,6 +87,8 @@ const manejarFormulario = async (e) => {
     if (imagen) {
         formData.append('imagen', imagen)
     }
+    console.log('Personaje seleccionado:', selectedPersonaje);
+
  // Si hay un personaje seleccionado, hacemos una petición PUT para actualizar; si no, hacemos una petición POST para crear un personaje nuevo
  const url = selectedPersonaje 
   ? `${VITE_CHARACTERS}/${selectedPersonaje._id}` 

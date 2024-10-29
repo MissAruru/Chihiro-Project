@@ -86,6 +86,8 @@ const manejarFormulario = async (e) => {
     // Si hay imagen, la añadimos a los datos
     if (imagen) {
         formData.append('imagen', imagen);
+    } else {
+        console.warn('No se ha seleccionado ninguna imagen.');
     }
 
     // Si hay un personaje seleccionado, hacemos una petición PUT para actualizar; si no, hacemos una petición POST para crear un personaje nuevo

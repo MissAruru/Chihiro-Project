@@ -13,6 +13,17 @@ const upload = multer({ storage: storage });
 
 const controller = new AbortController()
 
+const cloudinary = require('./config/cloudinary'); // Ajusta la ruta según sea necesario
+
+cloudinary.api.resources()
+    .then(result => {
+        console.log("Conexión exitosa a Cloudinary:", result);
+    })
+    .catch(err => {
+        console.error("Error al conectar a Cloudinary:", err);
+    });
+
+
 // Y comenzamos a configurar. Comenzamos con el controlador para todos los personajes en método GET:
 
 const getPersonaje = async (req, res, next) => {

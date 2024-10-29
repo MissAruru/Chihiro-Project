@@ -7,6 +7,7 @@ const mongoose = require('mongoose')
 const multer = require('multer')
 const path = require('path')
 const cloudinary = require('../config/cloudinary')
+const upload = multer({ storage: storage });
 
 
 const controller = new AbortController()
@@ -44,10 +45,15 @@ const getPersonaje = async (req, res, next) => {
 
 const postPersonaje = async (req, res, next) => {
     const { nombre, nivel, raza, clase, descripcion } = req.body;
-    console.log(req.file);
 
     try {
-        const imagenUrl = req.file ? `https://chihiro-api-sigma.vercel.app/uploads/${req.file.filename}` : null;
+        if (!req.file) {
+            return res.status(400).json({ message: 'No se ha subido ninguna imagen' });
+        }
+
+        // Sube la imagen a Cloudinary
+        const result = await cloudinary.uploader.upload_stream({ resource_type: 'image' })
+            .end(req.file.buffer);
 
         const nuevoPersonaje = new Personajes({
             nombre,
@@ -55,7 +61,7 @@ const postPersonaje = async (req, res, next) => {
             raza,
             clase,
             descripcion,
-            imagenUrl
+            imagenUrl: result.secure_url, // Guarda la URL de Cloudinary
         });
 
         await nuevoPersonaje.save();
@@ -70,7 +76,6 @@ const postPersonaje = async (req, res, next) => {
 }
 
 
-
 // Controlador para actualizar un personaje ya creado en método PUT
 
 const putPersonaje = async (req, res) => {
@@ -79,7 +84,7 @@ const putPersonaje = async (req, res) => {
 
         console.log('Datos de la solicitud:', req.body);
         console.log('ID del personaje:', id); // Agrega un log aquí
-
+        const updateData = {}; // Inicializa updateData aquí
         // Si hay una imagen, súbela a Cloudinary
         if (req.file) {
             const result = await new Promise((resolve, reject) => {

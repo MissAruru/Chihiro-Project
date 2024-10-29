@@ -91,9 +91,11 @@ router.all('*', (req, res, next) => {
 // Otro Middleware para manejar errores internos
 
 router.use((err, req, res, next) => {
-    const { status = 500, statusText = 'Error interno de mi API' } = err
-    res.status(status).json({ status, statusText })
-})
+    console.error(err); // Imprime el error completo en la consola
+    const { status = 500, statusText = 'Error interno de mi API' } = err;
+    res.status(status).json({ status, statusText });
+});
+
 
     
 // Finalmente se exporta el router para su uso en otras partes de la aplicación.

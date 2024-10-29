@@ -41,9 +41,10 @@ const getPersonaje = async (req, res, next) => {
 
 const postPersonaje = async (req, res, next) => {
     const { nombre, nivel, raza, clase, descripcion } = req.body
-    const imagen = req.file ? req.file.buffer : null; // Obtiene el nombre del archivo de imagen si se subió
+    
     try {
-
+        const imagenBuffer = req.file ? req.file.buffer : null;
+        const imagenMimeType = req.file ? req.file.mimetype : null;
         // Crea un nuevo personaje con las características y lo guarda en la base de datos.
 
         const nuevoPersonaje = new Personajes({
@@ -52,13 +53,14 @@ const postPersonaje = async (req, res, next) => {
             raza,
             clase,
             descripcion,
-            imagen: req.file ? req.file.buffer : null,
-            imagenMimeType: req.file ? req.file.mimetype : null,
-            imagenUrl: req.file ? `/personajes/${nuevoPersonaje._id}/imagen` : null 
+            imagen: imagenBuffer,
+            imagenMimeType: imagenMimeType
         })
-
+        // Guarda el personaje primero para generar el `_id`
         await nuevoPersonaje.save();
 
+        // Ahora que el personaje tiene `_id`, se asigna `imagenUrl`
+        nuevoPersonaje.imagenUrl = req.file ? `/personajes/${nuevoPersonaje._id}/imagen` : null;
         // Devuelve la lista de personajes después de crearlos
 
         const personajes = await Personajes.find()

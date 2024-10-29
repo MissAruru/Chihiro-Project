@@ -31,6 +31,7 @@ const getPersonaje = async (req, res, next) => {
 
         // Y devuelve la lista de personajes formateada.
 
+        
         res.json(personajesFormatted)
     } catch (error) {
         console.error('Error al obtener personajes:', error.message) // Manejo de errores

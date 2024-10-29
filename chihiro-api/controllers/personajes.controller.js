@@ -6,7 +6,7 @@ const { Personajes } = require('./../models/models')
 const mongoose = require('mongoose')
 const multer = require('multer')
 const path = require('path')
-const cloudinary = require('../config/cloudinary');
+const cloudinary = require('../config/cloudinary')
 
 
 const controller = new AbortController()

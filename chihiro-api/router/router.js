@@ -1,105 +1,92 @@
 // Archivo router.js para configurar las rutas de Express:
 
+const express = require('express');
+const multer = require('multer');
+const path = require('path');
+const cloudinary = require('../config/cloudinary'); // Asegúrate de que esta ruta sea correcta
+const { postLogin } = require('../controllers/login.controller');
+const { getPersonaje, postPersonaje, putPersonaje, deletePersonaje } = require('../controllers/personajes.controller');
 
+const router = express.Router();
 
-// Primero importamos las dependencias necesarias:
-
-const express = require('express')
-const multer = require('multer')
-const path = require('path')
-const { postLogin } = require('../controllers/login.controller')
-const { getPersonaje, postPersonaje, putPersonaje, deletePersonaje } = require('../controllers/personajes.controller')
-const router = express.Router()
-
-// Ahora configuramos el almacenamiento para Multer (subida de imagenes a la web)
-
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'uploads/'); // Ajusta la ruta donde deseas almacenar las imágenes
-    },
-    filename: (req, file, cb) => {
-        const ext = path.extname(file.originalname);
-        cb(null, `${Date.now()}${ext}`); // Asigna un nombre único a cada archivo
-    },
-});
-
-
-// Configuramos Multer con límites de tamaño y filtros de archivo
+// Configuramos Multer con almacenamiento en memoria
+const storage = multer.memoryStorage(); // Usamos almacenamiento en memoria
 const upload = multer({
     storage: storage,
     limits: { fileSize: 5 * 1024 * 1024 }, // 5MB como máximo
     fileFilter: (req, file, cb) => {
-        const allowedTypes = /jpeg|jpg|png|gif/
-        const isValid = allowedTypes.test(path.extname(file.originalname).toLowerCase())
-        cb(isValid ? null : new Error('Solo se permiten archivos de imagen (jpeg, jpg, png, gif)'), isValid)
+        const allowedTypes = /jpeg|jpg|png|gif/;
+        const isValid = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+        cb(isValid ? null : new Error('Solo se permiten archivos de imagen (jpeg, jpg, png, gif)'), isValid);
     }
-})
+});
 
-// Definimos la ruta para subir archivos (con almacenamiento en memoria)
-router.post('/upload', upload.single('imagen'), (req, res) => {
+// Ruta para subir archivos
+router.post('/upload', upload.single('imagen'), async (req, res) => {
     if (!req.file) {
         return res.status(400).send('No se ha subido ningún archivo.');
     }
-    console.log('Archivo subido:', req.file);
 
-    res.status(200).send({ message: 'Imagen subida en memoria', file: req.file });
-});
-// Creamos un router de Express
-
-
-// Y definimos las rutas, en este caso la de login en post, para poder manejar el inicio de sesión
-
-router.post('/login', postLogin)
-
-// Ruta principal GET /
-router.get('/', (req, res) => {
-    res.send('Haciendo / en GET')
-});
-
-// router.js
-
-router.get('/personajes/:id/imagen', async (req, res) => {
     try {
-        const personaje = await Personajes.findById(req.params.id)
-        if (!personaje || !personaje.imagenUrl) {
-            return res.status(404).send('Imagen no encontrada')
-        }
-        res.redirect(personaje.imagenUrl)
+        const result = await cloudinary.uploader.upload_stream({ resource_type: 'image' }, (error, result) => {
+            if (error) {
+                return res.status(500).send('Error subiendo la imagen a Cloudinary.');
+            }
+            res.status(200).send({ message: 'Imagen subida a Cloudinary', file: result });
+        });
+
+        const stream = cloudinary.uploader.upload_stream(result);
+        stream.end(req.file.buffer); // Aquí estamos enviando el buffer de la imagen a Cloudinary
     } catch (error) {
-        res.status(500).send('Error al obtener la imagen')
+        console.error('Error en la subida a Cloudinary:', error);
+        res.status(500).send('Error al subir la imagen');
     }
 });
 
+// Ruta para login
+router.post('/login', postLogin);
 
-// Aquí definimos la ruta del creador de personajes, en GET y POST.
+// Ruta principal GET /
+router.get('/', (req, res) => {
+    res.send('Haciendo / en GET');
+});
 
+// Ruta para obtener la imagen de un personaje
+router.get('/personajes/:id/imagen', async (req, res) => {
+    try {
+        const personaje = await Personajes.findById(req.params.id);
+        if (!personaje || !personaje.imagenUrl) {
+            return res.status(404).send('Imagen no encontrada');
+        }
+        res.redirect(personaje.imagenUrl);
+    } catch (error) {
+        res.status(500).send('Error al obtener la imagen');
+    }
+});
+
+// Rutas para personajes
 router.route('/personajes')
     .get(getPersonaje)
-    .post(upload.single('imagen'), postPersonaje)
+    .post(upload.single('imagen'), postPersonaje);
 
-// Y en PUT y DELETE, identificándolos con el ID.
-
+// Rutas para PUT y DELETE
 router.route('/personajes/:id')
-.put(upload.single('imagen'), putPersonaje)
-    .delete(deletePersonaje)
+    .put(upload.single('imagen'), putPersonaje)
+    .delete(deletePersonaje);
 
-// A continuación creamos un Middleware para manejar las rutas no encontradas (404)
-
+// Middleware para manejar rutas no encontradas (404)
 router.all('*', (req, res, next) => {
     const err = new Error('No encuentro el Endpoint');
     err.status = 404;
-    next(err)
-})
-// Otro Middleware para manejar errores internos
+    next(err);
+});
 
+// Middleware para manejar errores internos
 router.use((err, req, res, next) => {
     console.error(err); // Imprime el error completo en la consola
     const { status = 500, statusText = 'Error interno de mi API' } = err;
     res.status(status).json({ status, statusText });
 });
 
-
-    
-// Finalmente se exporta el router para su uso en otras partes de la aplicación.
-
-module.exports = {router}
+// Exportamos el router
+module.exports = { router };

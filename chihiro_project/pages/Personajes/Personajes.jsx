@@ -60,8 +60,9 @@ export const Personajes = () => {
                     imagenUrl: imageUrl // Actualizar la URL de la imagen seleccionada
                 }))
             }
+            setError(null) // Limpia el error al seleccionar un archivo
         } else {
-            setNombreArchivo("No se ha seleccionado archivo")
+            setNombreArchivo("No se ha seleccionado archivo");
         }
     }
 
@@ -77,13 +78,8 @@ export const Personajes = () => {
         formData.append('nivel', formulario.nivel.value)
         formData.append('descripcion', formulario.descripcion.value)
 
-        // Si no hay imagen, se establece un mensaje de error en el estado
-        if (!imagen) {
-            setError("Por favor, sube una imagen para el personaje.")
-            return
-        } else {
-            formData.append('imagen', imagen)
-            setError(null) // Reinicia el estado de error si hay una imagen seleccionada
+        if (imagen) {
+            formData.append('imagen', imagen);
         }
 // Define la URL y método (POST o PUT) según si se está editando o creando un personaje
         const url = selectedPersonaje 

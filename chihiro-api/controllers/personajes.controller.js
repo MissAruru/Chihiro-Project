@@ -51,36 +51,38 @@ const postPersonaje = async (req, res) => {
     const { nombre, nivel, raza, clase, descripcion } = req.body
     console.log("Datos recibidos:", req.body)
     try {
-        // Verificamos que haya un archivo de imagen cargado
-        if (!req.file) {
-            return res.status(400).json({ message: 'No se ha subido ninguna imagen' })
-        }
-        // Subimos la imagen a Cloudinary
-        const result = await new Promise((resolve, reject) => {
-            const stream = cloudinary.uploader.upload_stream(
-                { resource_type: 'image' },
-                (error, result) => {
-                    if (error) reject(error)
-                    else resolve(result)
-                }
-            )
-            stream.end(req.file.buffer)
-        })
-        // Creamos un nuevo personaje con los datos recibidos y la URL de la imagen
-        const nuevoPersonaje = new Personajes({ 
+        // Creamos un objeto para el nuevo personaje
+        const nuevoPersonajeData = { 
             nombre,
             nivel,
             raza,
             clase,
             descripcion,
-            imagenUrl: result.secure_url,
-        })
-    // Guardamos el personaje en la base de datos y enviamos como respuesta el personaje creado
-        await nuevoPersonaje.save()
-        res.status(201).json(nuevoPersonaje)
+        };
+
+        // Verificamos si hay un archivo de imagen cargado y subimos a Cloudinary si existe
+        if (req.file) {
+            const result = await new Promise((resolve, reject) => {
+                const stream = cloudinary.uploader.upload_stream(
+                    { resource_type: 'image' },
+                    (error, result) => {
+                        if (error) reject(error);
+                        else resolve(result);
+                    }
+                );
+                stream.end(req.file.buffer);
+            });
+            nuevoPersonajeData.imagenUrl = result.secure_url; // Solo agregamos la imagen si existe
+        }
+
+        // Creamos un nuevo personaje con los datos recibidos
+        const nuevoPersonaje = new Personajes(nuevoPersonajeData);
+        // Guardamos el personaje en la base de datos y enviamos como respuesta el personaje creado
+        await nuevoPersonaje.save();
+        res.status(201).json(nuevoPersonaje);
     } catch (error) {
-        console.error('Error al crear el personaje:', error.message)
-        next(error) // Manejo de errores, pasa al siguiente middleware
+        console.error('Error al crear el personaje:', error.message);
+        next(error); // Manejo de errores, pasa al siguiente middleware
     }
 }
 

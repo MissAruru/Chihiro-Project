@@ -22,7 +22,10 @@ const conectar = async () => {
 const app = express();
 
 const corsOptions = {
-    origin: 'https://chihiro-project.vercel.app',
+    origin: [
+        'https://chihiro-project.vercel.app',
+        'https://chihiro-project.vercel.app/personajes'
+    ],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type'],
 };

@@ -4,7 +4,7 @@ const cloudinary = require('../config/cloudinary');
 
 const multer = require('multer');
 const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
+
 
 cloudinary.api.resources()
     .then(result => {

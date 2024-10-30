@@ -6,7 +6,7 @@ const path = require('path');
 const cloudinary = require('../config/cloudinary'); // Ajusta la ruta según tu estructura de proyecto
 const { postLogin } = require('../controllers/login.controller');
 const { getPersonaje, postPersonaje, putPersonaje, deletePersonaje } = require('../controllers/personajes.controller');
-const { Personaje } = require('../schema/schema'); // Importa el modelo desde schema.js
+const { Personajes } = require('../models/models'); // Asegúrate de que esta importación es correcta
 const router = express.Router();
 
 // Configuramos Multer con almacenamiento en memoria
@@ -60,7 +60,7 @@ router.get('/', (req, res) => {
 // Ruta para obtener la imagen de un personaje
 router.get('/personajes/:id/imagen', async (req, res) => {
     try {
-        const personaje = await Personaje.findById(req.params.id);
+        const personaje = await Personajes.findById(req.params.id);
         if (!personaje || !personaje.imagenUrl) {
             return res.status(404).send('Imagen no encontrada');
         }

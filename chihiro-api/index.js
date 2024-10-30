@@ -11,14 +11,13 @@ const PORT = process.env.PORT || 3000
 
 const conectar = async () => {
     try {
-        await mongoose.connect(MONGO);
+        await mongoose.connect(process.env.MONGO_URI);
         console.log(`Conectado a MongoDB`);
     } catch (err) {
         console.log(`Error de conexión a MongoDB: ${err}`);
-        // Don't exit the process, as it will stop the serverless function
-        // process.exit(1);
     }
-};
+}
+
 
 const app = express();
 

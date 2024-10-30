@@ -21,6 +21,7 @@ export const Personajes = () => {
     const [selectedPersonaje, setSelectedPersonaje] = useState(null)
     const [nombreArchivo, setNombreArchivo] = useState("No se ha cargado imagen")
     const [imagen, setImagen] = useState(null)
+    const [error, setError] = useState(null)
     const formularioRef = useRef(null)
 
 

@@ -6,7 +6,7 @@ const path = require('path');
 const cloudinary = require('../config/cloudinary'); // Ajusta la ruta según tu estructura de proyecto
 const { postLogin } = require('../controllers/login.controller');
 const { getPersonaje, postPersonaje, putPersonaje, deletePersonaje } = require('../controllers/personajes.controller');
-const { Personaje } = require('../models/schema'); // Importa el modelo desde schema.js
+const { Personaje } = require('../schema/schema'); // Importa el modelo desde schema.js
 const router = express.Router();
 
 // Configuramos Multer con almacenamiento en memoria

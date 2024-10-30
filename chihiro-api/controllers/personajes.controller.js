@@ -1,36 +1,33 @@
 const { Personajes } = require('./../models/models')
-const mongoose = require('mongoose')
-const cloudinary = require('../config/cloudinary')
+const mongoose = require('mongoose');
+const cloudinary = require('../config/cloudinary');
 
- const multer = require('multer')
+const multer = require('multer');
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 
- const storage = multer.memoryStorage();
- const upload = multer({ storage: storage });
- const controller = new AbortController()
-
-
- cloudinary.api.resources()
-  .then(result => {
+cloudinary.api.resources()
+    .then(result => {
         console.log("Conexión exitosa a Cloudinary:", result);
-     })
-     .catch(err => {
-         console.error("Error al conectar a Cloudinary:", err);
-     });
+    })
+    .catch(err => {
+        console.error("Error al conectar a Cloudinary:", err);
+    });
 
 const getPersonaje = async (req, res, next) => {
     try {
-        const personajes = await Personajes.find()
+        const personajes = await Personajes.find();
         
         const personajesFormatted = personajes.map(p => ({
             ...p._doc,
             _id: p._id.toString(),
             imagenUrl: p.imagenUrl || null
-        }))
+        }));
         
-        res.json(personajesFormatted)
+        res.json(personajesFormatted);
     } catch (error) {
-        console.error('Error al obtener personajes:', error.message)
-        res.status(500).json({ error: 'Error al obtener personajes' })
+        console.error('Error al obtener personajes:', error.message);
+        res.status(500).json({ error: 'Error al obtener personajes' });
     }
 }
 
@@ -53,7 +50,7 @@ const postPersonaje = async (req, res) => {
             stream.end(req.file.buffer);
         });
 
-        const nuevoPersonaje = new Personajes({
+        const nuevoPersonaje = new Personajes({ // Cambia Personaje por Personajes
             nombre,
             nivel,
             raza,
@@ -63,7 +60,6 @@ const postPersonaje = async (req, res) => {
         });
 
         await nuevoPersonaje.save();
-
         res.status(201).json(nuevoPersonaje);
     } catch (error) {
         console.error('Error al crear el personaje:', error.message);
@@ -74,8 +70,8 @@ const postPersonaje = async (req, res) => {
 const putPersonaje = async (req, res) => {
     try {
         const id = req.params.id.trim();
-
         const updateData = { ...req.body };
+
         if (req.file) {
             const result = await new Promise((resolve, reject) => {
                 const stream = cloudinary.uploader.upload_stream(
@@ -90,11 +86,7 @@ const putPersonaje = async (req, res) => {
             updateData.imagenUrl = result.secure_url;
         }
 
-        const personajeActualizado = await Personajes.findByIdAndUpdate(
-            id,
-            updateData,
-            { new: true }
-        );
+        const personajeActualizado = await Personajes.findByIdAndUpdate(id, updateData, { new: true });
 
         if (!personajeActualizado) {
             return res.status(404).json({ message: 'Personaje no encontrado' });
@@ -108,18 +100,19 @@ const putPersonaje = async (req, res) => {
 };
 
 const deletePersonaje = async (req, res) => {
-    const { id } = req.params
+    const { id } = req.params;
     try {
-        const personajeId = new mongoose.Types.ObjectId(id)
+        const personajeId = new mongoose.Types.ObjectId(id);
+        const result = await Personajes.findByIdAndDelete(personajeId);
 
-        const result = await Personajes.findByIdAndDelete(personajeId)
         if (!result) {
-            return res.status(404).json({ error: 'Personaje no encontrado' })
+            return res.status(404).json({ error: 'Personaje no encontrado' });
         }
-        res.status(200).json({ message: 'Personaje eliminado correctamente' })
+
+        res.status(200).json({ message: 'Personaje eliminado correctamente' });
     } catch (error) {
-        console.error('Error al eliminar el personaje:', error.message)
-        res.status(500).json({ error: 'Error al eliminar el personaje' })
+        console.error('Error al eliminar el personaje:', error.message);
+        res.status(500).json({ error: 'Error al eliminar el personaje' });
     }
 }
 

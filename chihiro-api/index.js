@@ -6,7 +6,8 @@ const path = require('path');
 const { router } = require('./router/router');
 const cors = require('cors');
 
-const MONGO = process.env.MONGO_URI;
+const PORT = process.env.PORT || 3000
+
 
 const conectar = async () => {
     try {

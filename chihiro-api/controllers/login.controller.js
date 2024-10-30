@@ -8,7 +8,7 @@ const { Usuario } = require("../models/models")
 
 const postLogin = async (req, res, next) => {
     try {
-        const { usuario, password } = req.body;
+        const { usuario, password } = req.body
         if (!usuario || !password) {
             return res.status(400).json({ error: 'Usuario y contraseña son requeridos' }) // Con esto verificamos que se proporcione un usuario y una contraseña.
         }
@@ -25,6 +25,6 @@ const postLogin = async (req, res, next) => {
     }
 }
 
-// Exporta la función postLogin para que pueda ser utilizada en otras partes de la aplicación
+// Exportamos los controladores de personajes para utilizarlos en otras partes de la aplicación
 
 module.exports = { postLogin }

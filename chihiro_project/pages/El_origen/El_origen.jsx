@@ -1,5 +1,6 @@
 // Componente principal que representa "El origen", primera y segunda parte de la historia de la web.
 
+// Importamos todas las imágenes y el CSS correspondiente
 
 import React, { useState } from 'react'
 import arrow from '../../assets/Arrow.png'

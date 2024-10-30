@@ -1,109 +1,132 @@
-import './Personajes.css';
+/*
+
+Creador de personajes basado en un formulario con sistema CRUD. El siguiente archivo se divide en:
+
+- Obtener la lista de personajes + toda la configuración del CRUD.
+- HTML de la sección, incluido footer.
+
+*/
+
+import './Personajes.css'
 import flowerName from '../../assets/flower_name.png'
 import { useState, useEffect, useRef } from 'react'
 
 export const Personajes = () => {
+    // Extrae las variables de entorno necesarias para la API
     const { VITE_API, VITE_CHARACTERS, VITE_CHARACTERS_ID, VITE_IMAGE_BASE } = import.meta.env
-    const [personajes, setPersonajes] = useState([]);
+
+     // Definición de estados usando useState para los personajes, las imagenes, el formulario...
+
+    const [personajes, setPersonajes] = useState([])
     const [selectedPersonaje, setSelectedPersonaje] = useState(null)
     const [nombreArchivo, setNombreArchivo] = useState("No se ha cargado imagen")
     const [imagen, setImagen] = useState(null)
     const formularioRef = useRef(null)
 
+
+    // Con esto hacemos una función para obtener la lista de personajes desde la API.
     const pedirPersonajes = async () => {
         try {
-            const response = await fetch(`${VITE_CHARACTERS}`);
-            if (!response.ok) throw new Error('Error fetching personajes');
-            const data = await response.json();
+            const response = await fetch(`${VITE_CHARACTERS}`)
+            if (!response.ok) throw new Error('Error fetching personajes')
+            const data = await response.json()
             if (Array.isArray(data)) {
                 const personajesConImagen = data.map(personaje => ({
                     ...personaje,
-                    imagenUrl: personaje.imagenUrl || null // Usa directamente la imagenUrl almacenada en MongoDB
-                }));
-                setPersonajes(personajesConImagen);
+                    imagenUrl: personaje.imagenUrl || null 
+                }))
+                setPersonajes(personajesConImagen)
             }
         } catch (error) {
-            console.error('Error fetching personajes:', error);
+            console.error('Error fetching personajes:', error)
         }
     }
-    
+
+     // Función para manejar la selección de un archivo de imagen
+
 
     const manejarArchivoImagen = (e) => {
-        const file = e.target.files[0];
-        setImagen(file);
+        const file = e.target.files[0]
+        setImagen(file)
 
         if (file) {
-            console.log('Archivo de imagen seleccionado:', file);
-            setNombreArchivo(file.name);
-            const imageUrl = URL.createObjectURL(file);
+            console.log('Archivo de imagen seleccionado:', file)
+            setNombreArchivo(file.name)
+            const imageUrl = URL.createObjectURL(file)
             if (selectedPersonaje) {
                 setSelectedPersonaje(prev => ({
                     ...prev,
                     imagenUrl: imageUrl // Actualizar la URL de la imagen seleccionada
-                }));
+                }))
             }
         } else {
-            setNombreArchivo("No se ha seleccionado archivo");
+            setNombreArchivo("No se ha seleccionado archivo")
         }
     }
 
+// Función para manejar el envío del formulario
     const manejarFormulario = async (e) => {
-        e.preventDefault();
-        const { current: formulario } = formularioRef;
+        e.preventDefault()
+        const { current: formulario } = formularioRef
 
-        const formData = new FormData();
-        formData.append('nombre', formulario.nombre.value);
-        formData.append('raza', formulario.raza.value);
-        formData.append('clase', formulario.clase.value);
-        formData.append('nivel', formulario.nivel.value);
-        formData.append('descripcion', formulario.descripcion.value);
+        const formData = new FormData()
+        formData.append('nombre', formulario.nombre.value)
+        formData.append('raza', formulario.raza.value)
+        formData.append('clase', formulario.clase.value)
+        formData.append('nivel', formulario.nivel.value)
+        formData.append('descripcion', formulario.descripcion.value)
 
-        if (imagen) {
-            formData.append('imagen', imagen);
+        // Si no hay imagen, se establece un mensaje de error en el estado
+        if (!imagen) {
+            setError("Por favor, sube una imagen para el personaje.")
+            return
         } else {
-            console.warn('No se ha seleccionado ninguna imagen.');
+            formData.append('imagen', imagen)
+            setError(null) // Reinicia el estado de error si hay una imagen seleccionada
         }
-
+// Define la URL y método (POST o PUT) según si se está editando o creando un personaje
         const url = selectedPersonaje 
             ? `${VITE_CHARACTERS}/${selectedPersonaje._id}` 
-            : `${VITE_CHARACTERS}`;
-        const method = selectedPersonaje ? 'PUT' : 'POST';
+            : `${VITE_CHARACTERS}`
+        const method = selectedPersonaje ? 'PUT' : 'POST'
 
         try {
             const response = await fetch(url, {
                 method,
-                body: formData 
-            });
+                body: formData  // Envía los datos del form
+            })
 
             if (!response.ok) {
-                const errorMessage = await response.text(); 
-                throw new Error(`Error ${method === 'PUT' ? 'updating' : 'adding'} personaje: ${errorMessage}`);
+                const errorMessage = await response.text()
+                throw new Error(`Error ${method === 'PUT' ? 'updating' : 'adding'} personaje: ${errorMessage}`)
             }
 
-            const data = await response.json();
-            await pedirPersonajes();
-            setSelectedPersonaje(null);
-            formulario.reset();
-            setImagen(null); // Limpiar la imagen aquí
-            setNombreArchivo("No se ha cargado imagen"); // Reiniciar el nombre del archivo
+            const data = await response.json()
+            await pedirPersonajes() // Refresca la lista de personajes
+            setSelectedPersonaje(null) // Resetea el personaje seleccionado
+            formulario.reset() // Resetea el formulario
+            setImagen(null) // Limpia la imagen
+            setNombreArchivo("No se ha cargado imagen") // Reinicia el nombre del archivo
         } catch (error) {
-            console.error(`Error ${method === 'PUT' ? 'updating' : 'adding'} personaje: ${error.message}`);
+            console.error(`Error ${method === 'PUT' ? 'updating' : 'adding'} personaje: ${error.message}`)
         }
-    };
+    }
+
+// Con esto creamos una función para eliminar un personaje
 
     const deletePersonaje = async (_id) => {
-        if (!_id) return; 
+        if (!_id) return // Si no hay ID, se sale de la función
         
         try {
             const response = await fetch(`${VITE_CHARACTERS}/${_id}`, {
-                method: 'DELETE',
-            });
-            if (!response.ok) throw new Error(`Error eliminando personaje: ${response.statusText}`);
+                method: 'DELETE', // Método DELETE para eliminar el personaje
+            })
+            if (!response.ok) throw new Error(`Error eliminando personaje: ${response.statusText}`)
             
-            await pedirPersonajes();
-            setSelectedPersonaje(null);
+                await pedirPersonajes() // Recarga la lista de personajes
+                setSelectedPersonaje(null) // Resetea el personaje seleccionado
         } catch (error) {
-            console.error('Error eliminando el personaje:', error);
+            console.error('Error eliminando el personaje:', error)
         }
     }
 
@@ -112,25 +135,26 @@ export const Personajes = () => {
             setSelectedPersonaje({
                 ...personaje,
                 imagenUrl: personaje.imagenUrl || null
-            });
+            })
             // Actualizar el formulario con los datos del personaje seleccionado
-            const { current: formulario } = formularioRef;
+            const { current: formulario } = formularioRef
             if (formulario) {
-                formulario.nombre.value = personaje.nombre;
-                formulario.raza.value = personaje.raza;
-                formulario.clase.value = personaje.clase;
-                formulario.nivel.value = personaje.nivel;
-                formulario.descripcion.value = personaje.descripcion;
-                setNombreArchivo(personaje.imagen ? personaje.imagen.url : "No se ha cargado imagen");
+                formulario.nombre.value = personaje.nombre
+                formulario.raza.value = personaje.raza
+                formulario.clase.value = personaje.clase
+                formulario.nivel.value = personaje.nivel
+                formulario.descripcion.value = personaje.descripcion
+                setNombreArchivo(personaje.imagen ? personaje.imagen.url : "No se ha cargado imagen")
             }
         } else {
-            console.error('Personaje no válido o sin ID');
+            console.error('Personaje no válido o sin ID')
         }
-    };
+    }
 
+    // useEffect para cargar los personajes al montar el componente
     useEffect(() => {
-        pedirPersonajes();
-    }, []);
+        pedirPersonajes() // Llama a la función para obtener personajes
+    }, [])
 
     return (
         <>
@@ -170,11 +194,19 @@ export const Personajes = () => {
                         </div>
                     )}
                 </div>
-                {/* Sección del creador para visualizar los personajes */}
+                {/* Sección del creador para visualizar los personajes:
+                - Nombre del personaje
+                - Raza
+                - Clase
+                - Nivel 
+                - Descripción
+                - Imagen
+                */}
+                
                 <div className="Wrapper-story">
                     {selectedPersonaje ? (
                         <div className='Wrapper-story-text'>
-                            <h2 className='Wrapper-story--h2'>{selectedPersonaje.nombre}</h2>
+                            <h2 className='Wrapper-story--h2'>{selectedPersonaje.nombre}</h2> 
                             <p>Raza: {selectedPersonaje.raza}</p>
                             <p>Clase: {selectedPersonaje.clase}</p>
                             <p>Nivel: {selectedPersonaje.nivel}</p>
@@ -220,5 +252,5 @@ export const Personajes = () => {
                 </div>
             </footer>
         </>
-    );
-};
+    )
+}

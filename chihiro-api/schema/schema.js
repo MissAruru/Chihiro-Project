@@ -27,10 +27,10 @@ const personajesSchema = new mongoose.Schema(
     { 
         collection: 'personajes',
         versionKey: false,
-        timestamps: true // Agrega createdAt y updatedAt
+        timestamps: true // Agregados createdAt y updatedAt
     }
-);
+)
 
 
 // Finalmente exportamos ambos modelos para poder utilizarlos en otras partes de la aplicación
-module.exports = { usuariosSchema, personajesSchema };
+module.exports = { usuariosSchema, personajesSchema }

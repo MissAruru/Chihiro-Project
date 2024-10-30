@@ -1,16 +1,28 @@
-require('dotenv').config();
+/*
 
-const express = require('express');
-const mongoose = require('mongoose');
-const path = require('path');
-const { router } = require('./router/router');
-const cors = require('cors');
+Archivo principal de la API. En ella encontramos la conexión a MongoDB, las opciones de CORS, y la inicialización de la API.
 
-const PORT = process.env.PORT || 3000
+*/
 
 
+// Cargamos las variables de entorno desde el archivo .env
+
+require('dotenv').config()
+
+// Y ahora se importan las dependencias necesarias.
+
+const express = require('express')
+const mongoose = require('mongoose')
+const path = require('path')
+const { router } = require('./router/router')
+const cors = require('cors')
+
+const PORT = process.env.PORT || 3000 // Define el puerto de la aplicación (usa el de entorno o 3000 como predeterminado)
+
+// Función asíncrona para conectar a la base de datos MongoDB
 const conectar = async () => {
     try {
+        // Intenta conectarse a la base de datos usando la variable de entorno MONGO_URI, si no, da error
         await mongoose.connect(process.env.MONGO_URI);
         console.log(`Conectado a MongoDB`);
     } catch (err) {
@@ -18,8 +30,11 @@ const conectar = async () => {
     }
 }
 
+// Inicializamos la API con Express
 
 const app = express();
+
+// Y ahora configuramos las opciones de CORS para limitar el acceso a la API desde cualquier origen.
 
 const corsOptions = {
     origin: [
@@ -28,26 +43,41 @@ const corsOptions = {
     ],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type'],
-};
+}
 
-app.use(cors(corsOptions));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+// Aplicamos el middleware CORS con las opciones definidas
 
-app.use(router);
+app.use(cors(corsOptions))
 
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// Añadimos un middleware para parsear solicitudes en formato JSON y otra para URL-encoded
+
+app.use(express.json())
+app.use(express.urlencoded({ extended: false }))
+
+// Definimos el enrutador principal 
+
+app.use(router)
+
+// Y ahora la ruta para los archivos estáticos de imágenes subidas de forma local.
+
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
+
+// Ahora añadimos un Middleware para manejar los errores
 
 app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).send('Algo salió mal!');
-});
+    console.error(err.stack)
+    res.status(500).send('Algo salió mal!')
+})
 
+// Iniciamos el servidor en el puerto definido y mostramos un mensaje de confirmación en caso de que se conecte.
 app.listen(PORT, () => {
-    console.log(`Servidor corriendo en el puerto ${PORT}`);
-});
+    console.log(`Servidor corriendo en el puerto ${PORT}`)
+})
 
-conectar();
+//Llamamos a la función para conectar a la base de datos 
 
+conectar()
 
-module.exports = app;
+// Y finalmente exportamos la API.
+
+module.exports = app

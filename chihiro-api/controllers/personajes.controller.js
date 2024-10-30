@@ -36,7 +36,7 @@ const getPersonaje = async (req, res, next) => {
             ...p._doc,
             _id: p._id.toString(),
             imagenUrl: p.imagenUrl || null
-        }));
+        }))
         
         res.json(personajesFormatted)
     } catch (error) {
@@ -58,7 +58,7 @@ const postPersonaje = async (req, res) => {
             raza,
             clase,
             descripcion,
-        };
+        }
 
         // Verificamos si hay un archivo de imagen cargado y subimos a Cloudinary si existe
         if (req.file) {
@@ -66,23 +66,23 @@ const postPersonaje = async (req, res) => {
                 const stream = cloudinary.uploader.upload_stream(
                     { resource_type: 'image' },
                     (error, result) => {
-                        if (error) reject(error);
-                        else resolve(result);
+                        if (error) reject(error)
+                        else resolve(result)
                     }
-                );
-                stream.end(req.file.buffer);
-            });
-            nuevoPersonajeData.imagenUrl = result.secure_url; // Solo agregamos la imagen si existe
+                )
+                stream.end(req.file.buffer)
+            })
+            nuevoPersonajeData.imagenUrl = result.secure_url // Solo agregamos la imagen si existe
         }
 
         // Creamos un nuevo personaje con los datos recibidos
-        const nuevoPersonaje = new Personajes(nuevoPersonajeData);
+        const nuevoPersonaje = new Personajes(nuevoPersonajeData)
         // Guardamos el personaje en la base de datos y enviamos como respuesta el personaje creado
-        await nuevoPersonaje.save();
-        res.status(201).json(nuevoPersonaje);
+        await nuevoPersonaje.save()
+        res.status(201).json(nuevoPersonaje)
     } catch (error) {
-        console.error('Error al crear el personaje:', error.message);
-        next(error); // Manejo de errores, pasa al siguiente middleware
+        console.error('Error al crear el personaje:', error.message)
+        next(error) // Manejo de errores, pasa al siguiente middleware
     }
 }
 
@@ -121,13 +121,13 @@ const putPersonaje = async (req, res) => {
 }
 
 const deletePersonaje = async (req, res) => {
-    const { id } = req.params;
+    const { id } = req.params
     try {
         const personajeId = new mongoose.Types.ObjectId(id)
 
         // Se busca y elimina el personaje en la base de datos
         
-        const result = await Personajes.findByIdAndDelete(personajeId);
+        const result = await Personajes.findByIdAndDelete(personajeId)
 
         if (!result) {
             return res.status(404).json({ error: 'Personaje no encontrado' })

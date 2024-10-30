@@ -3,10 +3,10 @@ require('dotenv').config();
 const express = require('express');
 const multer = require('multer');
 const path = require('path');
-const cloudinary = require('../config/cloudinary'); // Asegúrate de que esta ruta sea correcta
+const cloudinary = require('../config/cloudinary'); // Ajusta la ruta según tu estructura de proyecto
 const { postLogin } = require('../controllers/login.controller');
 const { getPersonaje, postPersonaje, putPersonaje, deletePersonaje } = require('../controllers/personajes.controller');
-
+const { Personaje } = require('../models/schema'); // Importa el modelo desde schema.js
 const router = express.Router();
 
 // Configuramos Multer con almacenamiento en memoria
@@ -31,12 +31,14 @@ router.post('/uploads', upload.single('imagen'), async (req, res) => {
         const result = await new Promise((resolve, reject) => {
             const stream = cloudinary.uploader.upload_stream({ resource_type: 'image' }, (error, result) => {
                 if (error) {
-                    return reject(error);
+                    reject(error);
+                } else {
+                    resolve(result);
                 }
-                resolve(result);
             });
-            stream.end(req.file.buffer); // Aquí estamos enviando el buffer de la imagen a Cloudinary
+            stream.end(req.file.buffer);
         });
+        
         console.log('Resultado de Cloudinary:', result)
         // Aquí puedes guardar result.secure_url en la base de datos
         res.status(200).send({ message: 'Imagen subida a Cloudinary', file: result });
@@ -58,7 +60,7 @@ router.get('/', (req, res) => {
 // Ruta para obtener la imagen de un personaje
 router.get('/personajes/:id/imagen', async (req, res) => {
     try {
-        const personaje = await Personajes.findById(req.params.id);
+        const personaje = await Personaje.findById(req.params.id);
         if (!personaje || !personaje.imagenUrl) {
             return res.status(404).send('Imagen no encontrada');
         }

@@ -24,18 +24,18 @@ const personajesSchema = new mongoose.Schema(
         descripcion: String,
         imagenUrl: { type: String }
     },
-
-    // Toda la colección es de tipo String a excepción de nivel que sería tipo Number.
-
-    {
+    { 
         collection: 'personajes',
-        versionKey: false
+        versionKey: false,
+        timestamps: true // Agrega createdAt y updatedAt
     }
-)
+);
 
-// Finalmente exportamos ambos esquemas para poder utilizarlos en otras partes de la aplicación
+const Usuario = mongoose.model('Usuario', usuariosSchema);
+const Personaje = mongoose.model('Personaje', personajesSchema);
 
+// Finalmente exportamos ambos modelos para poder utilizarlos en otras partes de la aplicación
 module.exports = {
-    usuariosSchema,
-    personajesSchema,
-}
+    Usuario,
+    Personaje,
+};

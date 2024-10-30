@@ -12,13 +12,13 @@ export const Personajes = () => {
 
     const pedirPersonajes = async () => {
         try {
-            const response = await fetch(`${VITE_CHARACTERS}`)
-            if (!response.ok) throw new Error('Error fetching personajes')
+            const response = await fetch(`${VITE_CHARACTERS}`);
+            if (!response.ok) throw new Error('Error fetching personajes');
             const data = await response.json();
             if (Array.isArray(data)) {
                 const personajesConImagen = data.map(personaje => ({
                     ...personaje,
-                    imagenUrl: personaje.imagen ? `${VITE_IMAGE_BASE}/${personaje.imagen.url}` : null
+                    imagenUrl: personaje.imagenUrl || null // Usa directamente la imagenUrl almacenada en MongoDB
                 }));
                 setPersonajes(personajesConImagen);
             }
@@ -26,12 +26,14 @@ export const Personajes = () => {
             console.error('Error fetching personajes:', error);
         }
     }
+    
 
     const manejarArchivoImagen = (e) => {
         const file = e.target.files[0];
         setImagen(file);
 
         if (file) {
+            console.log('Archivo de imagen seleccionado:', file);
             setNombreArchivo(file.name);
             const imageUrl = URL.createObjectURL(file);
             if (selectedPersonaje) {

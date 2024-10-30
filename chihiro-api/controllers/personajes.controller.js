@@ -33,7 +33,7 @@ const getPersonaje = async (req, res, next) => {
 
 const postPersonaje = async (req, res) => {
     const { nombre, nivel, raza, clase, descripcion } = req.body;
-
+    console.log("Datos recibidos:", req.body);
     try {
         if (!req.file) {
             return res.status(400).json({ message: 'No se ha subido ninguna imagen' });

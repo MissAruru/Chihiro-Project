@@ -43,13 +43,11 @@ app.use((err, req, res, next) => {
     res.status(500).send('Algo salió mal!');
 });
 
-// Connect to MongoDB when the app starts
+app.listen(PORT, () => {
+    console.log(`Servidor corriendo en el puerto ${PORT}`);
+});
+
 conectar();
 
-// Remove the explicit server listening, as Vercel will handle this
-// if (process.env.NODE_ENV !== 'production') {
-//     app.listen(PORT, () => console.log(`Iniciando API en ${PORT}`));
-// }
 
-// Export the Express API
 module.exports = app;

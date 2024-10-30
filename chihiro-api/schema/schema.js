@@ -32,10 +32,10 @@ const personajesSchema = new mongoose.Schema(
 );
 
 const Usuario = mongoose.model('Usuario', usuariosSchema);
-const Personaje = mongoose.model('Personaje', personajesSchema);
+const Personajes = mongoose.model('Personaje', personajesSchema);
 
 // Finalmente exportamos ambos modelos para poder utilizarlos en otras partes de la aplicación
 module.exports = {
     Usuario,
-    Personaje,
+    Personajes,
 };

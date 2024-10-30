@@ -2,21 +2,20 @@ const { Personajes } = require('./../models/models')
 const mongoose = require('mongoose')
 const cloudinary = require('../config/cloudinary')
 
-// Remove unused imports
-// const multer = require('multer')
-// const path = require('path')
-// const storage = multer.memoryStorage();
-// const upload = multer({ storage: storage });
-// const controller = new AbortController()
+ const multer = require('multer')
 
-// Remove this check as it's not necessary for the API functionality
-// cloudinary.api.resources()
-//     .then(result => {
-//         console.log("Conexión exitosa a Cloudinary:", result);
-//     })
-//     .catch(err => {
-//         console.error("Error al conectar a Cloudinary:", err);
-//     });
+ const storage = multer.memoryStorage();
+ const upload = multer({ storage: storage });
+ const controller = new AbortController()
+
+
+ cloudinary.api.resources()
+  .then(result => {
+        console.log("Conexión exitosa a Cloudinary:", result);
+     })
+     .catch(err => {
+         console.error("Error al conectar a Cloudinary:", err);
+     });
 
 const getPersonaje = async (req, res, next) => {
     try {

@@ -18,7 +18,10 @@ const { router } = require('./router/router')
 const cors = require('cors')
 
 const PORT = process.env.PORT || 3000 // Define el puerto de la aplicación (usa el de entorno o 3000 como predeterminado)
-
+if (!process.env.MONGO_URI) {
+    console.error('Falta la variable de entorno MONGO_URI');
+    process.exit(1);
+}
 // Función asíncrona para conectar a la base de datos MongoDB
 const conectar = async () => {
     try {

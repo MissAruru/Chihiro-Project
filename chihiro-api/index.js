@@ -40,13 +40,10 @@ const app = express();
 // Y ahora configuramos las opciones de CORS para limitar el acceso a la API desde cualquier origen.
 
 const corsOptions = {
-    origin: [
-        'https://chihiro-project-final.vercel.app',
-        'https://chihiro-project-final.vercel.app/personajes'
-    ],
+    origin: '*', 
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type'],
-};
+    allowedHeaders: ['Content-Type', 'Authorization'],
+}
 
 // Aplicamos el middleware CORS con las opciones definidas
 

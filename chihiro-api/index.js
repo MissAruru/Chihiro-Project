@@ -41,12 +41,12 @@ const app = express();
 
 const corsOptions = {
     origin: [
-        'https://https://chihiro-project-final.vercel.app',
-        'https://https://chihiro-project-final.vercel.app/personajes'
+        'https://chihiro-project-final.vercel.app',
+        'https://chihiro-project-final.vercel.app/personajes'
     ],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type'],
-}
+};
 
 // Aplicamos el middleware CORS con las opciones definidas
 
